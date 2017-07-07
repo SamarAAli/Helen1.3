@@ -4,7 +4,24 @@
     <string name="speech_input_phrase">Say the Phrase</string>
     <string name="stt_not_supported_message">Your Device Doesn\'t Support Speech to Text</string>
     <string name="pref_speech_rate">Speech Rate</string>
+    <string name="voiceButton">Ask Helen</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_label">Search bar</string>
+    <string name="settings_description">Search for books..authors..</string>
+    <!-- Details Activity Textviews-->
+    <string name="description">Book Description</string>
+    <string name="goodreads_rating">Rating by Goodreads</string>
+    <string name="helen_ratings">Rating by Helen Users</string>
+    <string name="user_ratings">Add your Rating Here</string>
+    <string name="listview_title">Book Reviews</string>
+    <string name="download">Download</string>
+    <string name="add_review">Add A Review</string>
+    <!-- Search Activity Textviews -->
+    <string name="hint">Enter Book Name or Author name</string>
+    <string name="seachRdBtn">Search Books</string>
+    <string name="similarRdBtn">Find Similar Books</string>
+    <string name="titleRdBtn">Search By Title</string>
+    <string name="authorRdBtn">Search By Author</string>
 </resources>
