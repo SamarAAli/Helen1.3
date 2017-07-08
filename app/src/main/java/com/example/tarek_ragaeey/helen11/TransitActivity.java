@@ -81,6 +81,7 @@ public class TransitActivity extends AppCompatActivity {
 
                 Intent i=new Intent(context,MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
             }
         });
     }
@@ -88,7 +89,7 @@ public class TransitActivity extends AppCompatActivity {
     {
       Boolean isSearch=Search;
         Boolean isTitle;
-                if(Type=="BOOK")
+                if(Type.equals("BOOK"))
                     isTitle=true;
                 else
                     isTitle=false;
