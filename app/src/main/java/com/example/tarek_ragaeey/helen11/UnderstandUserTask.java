@@ -75,41 +75,5 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     protected void onPostExecute(ArrayList<String> strings) {
         super.onPostExecute(strings);
     }
-    /* @Override
-    protected Void onPostExecute(Void aVoid ) {
-            super.onPostExecute(aVoid);
-        switch(queryClass) {
-            case "ReadBook":
-               break; // optional
-            case "Search" :
-                // Statements
-                break; // optional
-            case "Recommend" :
-                // Statements
-                break; // optional
 
-            case "WriteReview" :
-                // Statements
-                break; // optional
-            case "GetReview" :
-                // Statements
-                break; // optional
-            case "WriteRating" :
-                // Statements
-                break; // optional
-            case "GetRating" :
-                // Statements
-                break; // optional
-            case "AuthorName" :
-                // Statements
-                break; // optional
-
-
-            // You can have any number of case statements.
-            default : // Optional
-                break;// Statements
-        }
-
-
-    }*/
 }
