@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -28,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -45,12 +47,19 @@ public class ServerFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root= inflater.inflate(R.layout.fragment_server, container, false);
-        ImageView mMic=(ImageView) root.findViewById(R.id.search_view);
-        mMic.setOnClickListener(new View.OnClickListener() {
+        ImageView mSearch=(ImageView) root.findViewById(R.id.search_view);
+        mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
              //  ExceptSpeechInput();
             search();
+            }
+        });
+        Button mAsk=(Button)root.findViewById(R.id.ask_helen_search);
+        mAsk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExpectSpeechInput();
             }
         });
 
@@ -129,39 +138,7 @@ public class ServerFragment extends Fragment  {
             showDialogMsg("Please enter a book title or an author name!");
     }
 
-    ////////////////////////////////////////////////////////////////////
-   /* public void TestJson()
-    {
-        String result = "[ { \"query\":\"I want to a book called bad case of stripes\"," +
-                "\"query_class\":\"ReadBook\"," +
-                "\"score\":0.8199217319488525," +
-                "\"entities\":" +
-                "[ { \"entity\":\"a bad case of stripes\"," +
-                "\"type\":\"BOOK\"" +
-                " } ]," +
-                "\"intent\":\"ReadBook\"," +
-                "\"query_lemma\":\"-PRON- want to a book call harry potter \"" +
-                " } ]"; //result of the query
-        String queryClass=""; // returned class of the query ex: Readbook , searchbook
-        String Entity=""; // returned entity of the query ex: lord of the rings
-        String Type =""; // returned entity of the query ex: book or author
-      try {
-          JSONArray root = new JSONArray(result);
-          JSONObject root2=root.getJSONObject(0);
-          queryClass = root2.getString("query_class");
-          JSONArray Entity_Type = root2.getJSONArray("entities");
-          JSONObject EntityAndType = Entity_Type.getJSONObject(0);
 
-          Entity = EntityAndType.getString("entity");
-          Type = EntityAndType.getString("type");
-      } catch (Exception e) {
-          e.printStackTrace();
-        }
-        EditText et=(EditText) getActivity().findViewById(R.id.input_text);
-        et.setText("Query Class= "+queryClass +" Entity= "+Entity+" Type= "+Type);
-
-
-    }*/
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -173,15 +150,27 @@ public class ServerFragment extends Fragment  {
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            EditText wordsEntered = (EditText) getActivity().findViewById(R.id.input_text);
+             ArrayList<String> Result=new ArrayList<>();
+             UnderstandUserTask task=new UnderstandUserTask();
+             try {
+                 Result= task.execute(spokenText.get(0)).get();
+                 Intent i=new Intent(getActivity(),TransitActivity.class);
+                 i.putExtra("query_class",Result.get(0));
+                 i.putExtra("entity",Result.get(1));
+                 i.putExtra("type",Result.get(2));
+                 startActivity(i);
 
-            // Put the spoken text in the EditText
-            wordsEntered.setText(spokenText.get(0));
+
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             } catch (ExecutionException e) {
+                 e.printStackTrace();
+             }
 
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    public void ExceptSpeechInput() {
+    public void ExpectSpeechInput() {
 
         // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

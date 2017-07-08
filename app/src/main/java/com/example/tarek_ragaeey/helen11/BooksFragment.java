@@ -72,7 +72,7 @@ public class BooksFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //ExceptSpeechInput();
-                login();
+                ExpectSpeechInput();
             }
         });
 
@@ -166,7 +166,7 @@ public class BooksFragment extends Fragment {
             startActivityForResult(
                     Intent.createChooser(intent, "Select a File to Upload"),
                     FILE_SELECT_CODE);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
             Toast.makeText(getActivity(), "Please install a File Manager.",
                     Toast.LENGTH_SHORT).show();
@@ -181,13 +181,7 @@ public class BooksFragment extends Fragment {
                 Uri uri = data.getData();
 
                 File myFile = new File(uri.getPath());
-                /*String FilePath= myFile.getAbsolutePath();
-                String Filename=FilePath.substring(FilePath.lastIndexOf("/")+1);*/
-                // Get the path
-             /*   if(BookList==null)
-                {
-                    BookList=new HashSet<String>();
-                }*/
+
                 if(!Books.contains(uri.toString())){
                     BookList.add(uri.toString());
                     ///////////////////////////////////////////////
@@ -222,14 +216,17 @@ public class BooksFragment extends Fragment {
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-           /* EditText wordsEntered = (EditText) getActivity().findViewById(R.id.input_text);
 
-            // Put the spoken text in the EditText
-            wordsEntered.setText(spokenText.get(0));*/
            ArrayList<String> Result=new ArrayList<>();
            UnderstandUserTask task=new UnderstandUserTask();
             try {
                 Result= task.execute(spokenText.get(0)).get();
+                Intent i=new Intent(getActivity(),TransitActivity.class);
+                i.putExtra("query_class",Result.get(0));
+                i.putExtra("entity",Result.get(1));
+                i.putExtra("type",Result.get(2));
+                startActivity(i);
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -242,7 +239,7 @@ public class BooksFragment extends Fragment {
 
         super.onActivityResult(requestCode, resultCode, data);
     }
-    public void ExceptSpeechInput() {
+    public void ExpectSpeechInput() {
 
         // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

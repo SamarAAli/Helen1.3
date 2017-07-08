@@ -30,7 +30,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
 
         try {
 
-            url = new URL("http://127.0.0.1:8000/questions/" + strings[0]);
+            url = new URL("http://127.0.0.1:8000/questions/?question=" + strings[0]);
 
             urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -51,7 +51,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
             }
             JSONArray arr=new JSONArray(result);
             JSONObject root = arr.getJSONObject(0);
-            queryClass=root.getString("query_class");
+            queryClass=root.getString("intent");
             JSONArray Entity_Type=root.getJSONArray("entities");
             JSONObject EntityAndType=Entity_Type.getJSONObject(0);
 
