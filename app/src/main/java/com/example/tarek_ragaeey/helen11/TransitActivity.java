@@ -31,10 +31,10 @@ public class TransitActivity extends AppCompatActivity {
         Intent targetClass;
         switch (queryClass) {
             case "Search":
-                search(true,Entity,Type);
+                search(true,Entity,Type,"search");
 
             case "Recommend":
-                search(false,Entity,Type);
+                search(false,Entity,Type,"recommend");
 
             case "ReadBook":
                 break;
@@ -43,16 +43,16 @@ public class TransitActivity extends AppCompatActivity {
                 break;
 
             case "WriteReview ":
-                break;
+                RateReview(Entity,"writeReview");
 
             case "GetReview ":
-                break;
+                RateReview(Entity,"getReview");
 
             case "WriteRating ":
-                break;
+                RateReview(Entity,"writeRating");
 
             case "GetRating":
-                break;
+                RateReview(Entity,"getRating");
 
             case"AuthorName":
                 break;
@@ -85,7 +85,7 @@ public class TransitActivity extends AppCompatActivity {
             }
         });
     }
-    public void search(Boolean Search,String Entity,String Type )
+    public void search(Boolean Search,String Entity,String Type,String Action )
     {
       Boolean isSearch=Search;
         Boolean isTitle;
@@ -133,12 +133,36 @@ public class TransitActivity extends AppCompatActivity {
                     e.printStackTrace();
                     Log.e("Error:",e.toString());
                 }
-                Intent intent = new Intent(this, BookListActivity.class).putExtra("JSONObject", bookInfo.toString());
+                Intent intent = new Intent(this, BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action",Action);
                 startActivity(intent);
             }else
                 showDialogMsg("Please check your internet connection!");
 
     }
+    public void RateReview(String Entity,String Action )
+
+    {
+        String query = Entity;
+        if(isOnline(context)) {
+
+            searcher = new BookSearch(this);
+            JSONObject bookInfo = null;
+            try {
+                bookInfo = searcher.getBookByTitle(query);
+                bookInfo.put("query_param",query);
+            }catch (Exception e) {
+                e.printStackTrace();
+                Log.e("Error:",e.toString());
+            }
+            Intent intent = new Intent(this, BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action",Action);
+            startActivity(intent);
+        }else
+    showDialogMsg("Please check your internet connection!");
+    }
+
+
+
+
 
 
 }
