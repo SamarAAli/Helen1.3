@@ -29,24 +29,19 @@ public class CreateUserInteractions {
         super();
         activityContext = context;
     }
-    public void createReview (String Review,String book_title) throws Exception
+    public JSONObject createReview (String Review,String book_title) throws Exception
     {
         StringBuilder link = new StringBuilder("http://127.0.0.1:8000/book/comments/create/?book_title="+book_title);
         link.append("&review=");
         link.append(URLEncoder.encode(Review, "UTF-8"));
-        new CreateInteractionTask().execute(link.toString());
+        return new CreateInteractionTask().execute(link.toString()).get();
     }
-    public int createRating (float Rating,String book_title) throws Exception
+    public void createRating (float Rating,String book_title) throws Exception
     {
         StringBuilder link = new StringBuilder("http://127.0.0.1:8000/book/ratings/create/?book_title="+book_title);
         link.append("&rate=");
         link.append(URLEncoder.encode(Float.toString(Rating), "UTF-8"));
-        return new CreateInteractionTask().execute(link.toString()).get();
-    }
-    public JSONObject getNewReview(int reviewID) throws Exception
-    {
-        String link = "http://127.0.0.1:8000/book/comments/"+reviewID+"/Edit/";
-        return  new FetchReviewTask().execute(link).get();
+        new CreateInteractionTask().execute(link.toString());
     }
 
     private void showDialogMsg(String msg) {
@@ -63,15 +58,18 @@ public class CreateUserInteractions {
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-    private class CreateInteractionTask extends AsyncTask<String, Void, Integer>
+    private class CreateInteractionTask extends AsyncTask<String, Void, JSONObject>
     {
+        private JSONObject getReviewDataFromJson(String reviewJsonStr) throws JSONException {
+            JSONObject ReviewJsonObj = new JSONObject(reviewJsonStr);
+            return  ReviewJsonObj;
+        }
         @Override
-        protected Integer doInBackground(String... params)
+        protected JSONObject doInBackground(String... params)
         {
-            int ID = -1;
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            String result = null;
+            String reviewJsonstring = null;
             try {
                 Uri builtUri = Uri.parse(params[0]);
                 URL url = new URL(builtUri.toString());
@@ -98,67 +96,10 @@ public class CreateUserInteractions {
 
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
-                    return ID;
+                    return null;
                 }
-                result = buffer.toString();
+                reviewJsonstring = buffer.toString();
             }catch (IOException e) {
-                Log.e("Error:", "Could not connect ", e);
-                showDialogMsg("Please check your internet connection!");
-                return ID;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("Error:", "Error closing stream", e);
-                    }
-                }
-            }
-            ID = Integer.parseInt(result);
-            return ID;
-        }
-    }
-    private class FetchReviewTask extends AsyncTask<String, Void, JSONObject>
-    {
-        private JSONObject getBooksDataFromJson(String reviewJsonStr) throws JSONException {
-            JSONObject ReviewJsonObj = new JSONObject(reviewJsonStr);
-            return  ReviewJsonObj;
-        }
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String BooksJsonStr = null;
-            try {
-                Uri builtUri = Uri.parse(params[0]);
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                BooksJsonStr = buffer.toString();
-            } catch (IOException e) {
                 Log.e("Error:", "Could not connect ", e);
                 showDialogMsg("Please check your internet connection!");
                 return null;
@@ -175,7 +116,7 @@ public class CreateUserInteractions {
                 }
             }
             try{
-                return getBooksDataFromJson(BooksJsonStr);
+                return getReviewDataFromJson(reviewJsonstring);
             } catch (JSONException e)
             {
                 Log.e("Error:",e.getMessage(),e);
