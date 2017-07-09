@@ -14,7 +14,7 @@ public class BookListActivity extends AppCompatActivity implements FragmentListe
         setContentView(R.layout.book_list_activity);
         Intent intent = getIntent();
         Bundle extras = new Bundle();
-        if (intent != null && intent.hasExtra("JSONObject")) {
+        if (intent != null && intent.hasExtra("JSONObject") && intent.hasExtra("Action")) {
             extras = intent.getExtras();
         }
         if (savedInstanceState == null) {

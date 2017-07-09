@@ -24,4 +24,17 @@
     <string name="similarRdBtn">Find Similar Books</string>
     <string name="titleRdBtn">Search By Title</string>
     <string name="authorRdBtn">Search By Author</string>
+    <!-- App URLs -->
+    <string name="login">https://helen-final-gp.herokuapp.com/user/login/?username=</string>
+    <string name="signUp">https://helen-final-gp.herokuapp.com/user/register/?username=</string>
+    <string name="book_suggestion">https://helen-final-gp.herokuapp.com/book/suggestions/?book_title=</string>
+    <string name="recommend_by_book">https://helen-final-gp.herokuapp.com/book/recommend/book/?book_title=</string>
+    <string name="recommend_by_author">https://helen-final-gp.herokuapp.com/book/recommend/author/?author=</string>
+    <string name="search_by_book">https://helen-final-gp.herokuapp.com/book/search/book/?book_title=</string>
+    <string name="search_by_author">https://helen-final-gp.herokuapp.com/book/search/author/?author=</string>
+    <string name="search_book_details">https://helen-final-gp.herokuapp.com/book/search/detail/?book_title=</string>
+    <string name="book_download">https://helen-final-gp.herokuapp.com/book/book_download/?book_title=</string>
+    <string name="create_review">post https://helen-final-gp.herokuapp.com/book/comments/create/?book_title=</string>
+    <string name="create_rating">post https://helen-final-gp.herokuapp.com/book/ratings/create/?book_title=</string>
+    <string name="ask_helen">get https://helen-final-gp.herokuapp.com/question/?question=</string>
 </resources>

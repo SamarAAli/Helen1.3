@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
@@ -20,28 +19,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ServerFragment extends Fragment  {
     private FragmentListener flisttener;
     private AlertDialog alertDialog;
     private BookSearch searcher;
-    public ServerFragment() {
-        // Required empty public constructor
-    }
+    public ServerFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,7 +38,6 @@ public class ServerFragment extends Fragment  {
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             //  ExceptSpeechInput();
             search();
             }
         });
@@ -78,7 +64,6 @@ public class ServerFragment extends Fragment  {
             @Override
             public void onClick(DialogInterface arg0, int arg1) {
                 alertDialog.dismiss();
-                //getActivity().finish();
             }
         });
 
@@ -129,7 +114,7 @@ public class ServerFragment extends Fragment  {
                     e.printStackTrace();
                     Log.e("Error:",e.toString());
                 }
-                Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString());
+                Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action","search");
                 startActivity(intent);
             }else
                 showDialogMsg("Please check your internet connection!");

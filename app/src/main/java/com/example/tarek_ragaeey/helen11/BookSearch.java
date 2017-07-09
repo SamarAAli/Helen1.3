@@ -27,35 +27,35 @@ public class BookSearch {
     public JSONObject getBookByTitle(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = "http://127.0.0.1:8000/book/search/book/?book_title="+title;
+        String _BASE_URL = R.string.search_by_book+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getBookByAuthor(String book_author) throws Exception
     {
         String author = book_author.replace(" ","%20");
-        String _BASE_URL = "http://127.0.0.1:8000/book/search/author/?author="+author;
+        String _BASE_URL = R.string.search_by_author+author;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getSimilarByTitle(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = "http://127.0.0.1:8000/book/recommend/book/?book_title="+title;
+        String _BASE_URL = R.string.recommend_by_book+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getSimilarByAuthor(String book_author) throws Exception
     {
         String author = book_author.replace(" ","%20");
-        String _BASE_URL = "http://127.0.0.1:8000/book/recommend/author/?author="+author;
+        String _BASE_URL = R.string.recommend_by_author+author;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public  JSONObject getFullBookInfo(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = "http://127.0.0.1:8000/book/search/detail/?book_title="+title;
+        String _BASE_URL =  R.string.search_book_details+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
@@ -91,6 +91,7 @@ public class BookSearch {
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
+                //urlConnection.setReqProperty("Authorization","jwt <token>");
                 urlConnection.connect();
 
                 // Read the input stream into a String

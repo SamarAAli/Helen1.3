@@ -151,7 +151,7 @@ public class BookDownload {
             pDialog.dismiss();
             HttpURLConnection urlConnection = null;
             try{
-                Uri builtUri = Uri.parse("http://127.0.0.1:8000/book/book_download/?book_title="+BOOK_TITLE);
+                Uri builtUri = Uri.parse(R.string.book_download+BOOK_TITLE);
                 URL url = new URL(builtUri.toString());
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
