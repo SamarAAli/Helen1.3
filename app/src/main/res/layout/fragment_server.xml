@@ -16,7 +16,7 @@
         android:src="@mipmap/search_icon"
         android:id="@+id/search_view"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="57dp" />
+        android:layout_marginBottom="30dp" />
     <EditText
         android:id="@+id/input_text"
         android:layout_width="match_parent"
@@ -84,7 +84,6 @@
         android:text="@string/voiceButton"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_below="@+id/radio_btn_gp1"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>
