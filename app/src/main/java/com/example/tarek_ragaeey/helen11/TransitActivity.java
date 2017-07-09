@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class TransitActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
@@ -32,13 +36,13 @@ public class TransitActivity extends AppCompatActivity {
         switch (queryClass) {
             case "Search":
                 search(true,Entity,Type,"search");
-
+                    break;
             case "Recommend":
                 search(false,Entity,Type,"recommend");
-
-            case "ReadBook":
                 break;
-
+            case "ReadBook":
+                readBook(Entity);
+                break;
             case "Summary":
                 break;
 
@@ -47,10 +51,10 @@ public class TransitActivity extends AppCompatActivity {
 
             case "GetReview ":
                 RateReview(Entity,"getReview");
-
+                break;
             case "WriteRating ":
                 RateReview(Entity,"writeRating");
-
+                break;
             case "GetRating":
                 RateReview(Entity,"getRating");
 
@@ -62,6 +66,24 @@ public class TransitActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    private void readBook(String entity) {
+
+        String path = Environment.getExternalStorageDirectory().toString()+"/Download";
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++)
+        {
+            String Filename=files[i].getName().replaceAll(".pdf","");
+            if(Filename.equals(entity))
+            {
+                //jump to pdfReader
+            }
+        }
+    }
+
     public boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();

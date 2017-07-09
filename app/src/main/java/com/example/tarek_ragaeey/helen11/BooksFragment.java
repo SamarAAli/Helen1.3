@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -48,7 +49,7 @@ public class BooksFragment extends Fragment {
     }
 
     Set<String> BookList;
-    Boolean ThereisBooks=false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +72,8 @@ public class BooksFragment extends Fragment {
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ExceptSpeechInput();
                 ExpectSpeechInput();
+               // ReadBook();
             }
         });
 
@@ -218,9 +219,10 @@ public class BooksFragment extends Fragment {
 
 
            ArrayList<String> Result=new ArrayList<>();
-           UnderstandUserTask task=new UnderstandUserTask();
+          // UnderstandUserTask task=new UnderstandUserTask();
             try {
-                Result= task.execute(spokenText.get(0)).get();
+               // Result= task.execute(spokenText.get(0)).get();
+                Result=new UnderstandUserTask().execute(spokenText.get(0)).get();
                 Intent i=new Intent(getActivity(),TransitActivity.class);
                 i.putExtra("query_class",Result.get(0));
                 i.putExtra("entity",Result.get(1));
@@ -265,6 +267,18 @@ public class BooksFragment extends Fragment {
 
         }
 
+    }
+    public void ListBooks()
+    {
+        String path = Environment.getExternalStorageDirectory().toString()+"/Download";
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++)
+        {
+            Log.d("Files", "FileName:" + files[i].getName());
+        }
     }
 
 

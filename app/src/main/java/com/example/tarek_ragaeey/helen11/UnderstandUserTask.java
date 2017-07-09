@@ -1,6 +1,7 @@
 package com.example.tarek_ragaeey.helen11;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,19 +22,21 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     String queryClass=""; // returned class of the query ex: Readbook , searchbook
     String Entity=""; // returned entity of the query ex: lord of the rings
     String Type=""; // returned entity of the query ex: book or author
+    String token="";
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
 
         URL url;
-
-        HttpURLConnection urlConnection = null;
+    /*    String JWTauth="JWT "+token;
+    */    HttpURLConnection urlConnection = null;
 
         try {
-
-            url = new URL("http://127.0.0.1:8000/questions/?question=" + strings[0]);
+            String query=strings[0].replaceAll(" ","%20");
+            url = new URL(R.string.ask_helen+query);
 
             urlConnection = (HttpURLConnection) url.openConnection();
-
+      /*      urlConnection.setRequestProperty("Authorization",);
+      */
             InputStream in = urlConnection.getInputStream();
 
             InputStreamReader reader = new InputStreamReader(in);
@@ -61,6 +64,9 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
             Result.add(Entity);
             Result.add(Type);
 
+            Log.d("query_class",queryClass);
+            Log.d("Entity",Entity);
+            Log.d("Type",Type);
         }catch (Exception e) {
 
             e.printStackTrace();

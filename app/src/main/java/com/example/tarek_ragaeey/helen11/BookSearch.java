@@ -55,7 +55,7 @@ public class BookSearch {
     public  JSONObject getFullBookInfo(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL =  R.string.search_book_details+title;
+        String _BASE_URL = R.string.search_book_details+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
@@ -91,7 +91,6 @@ public class BookSearch {
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
-                //urlConnection.setReqProperty("Authorization","jwt <token>");
                 urlConnection.connect();
 
                 // Read the input stream into a String
