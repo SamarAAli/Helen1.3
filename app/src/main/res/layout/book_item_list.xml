@@ -2,10 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#444466">
+    android:background="#444466"
+    android:weightSum="1">
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="342dp"
         android:id="@+id/Book_List_view"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_weight="0.95" />
+    <Button
+        android:id="@+id/ask_helen_search"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:text="@string/voiceButton"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
 </LinearLayout>
