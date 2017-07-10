@@ -31,14 +31,14 @@ public class CreateUserInteractions {
     }
     public JSONObject createReview (String Review,String book_title) throws Exception
     {
-        StringBuilder link = new StringBuilder(R.string.create_review+book_title);
+        StringBuilder link = new StringBuilder(activityContext.getResources().getString(R.string.create_review)+book_title);
         link.append("&review=");
         link.append(URLEncoder.encode(Review, "UTF-8"));
         return new CreateInteractionTask().execute(link.toString()).get();
     }
     public void createRating (float Rating,String book_title) throws Exception
     {
-        StringBuilder link = new StringBuilder(R.string.create_rating+book_title);
+        StringBuilder link = new StringBuilder(activityContext.getResources().getString(R.string.create_rating)+book_title);
         link.append("&rate=");
         link.append(URLEncoder.encode(Float.toString(Rating), "UTF-8"));
         new CreateInteractionTask().execute(link.toString());

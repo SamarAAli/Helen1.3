@@ -34,7 +34,7 @@
     <string name="search_by_author">https://helen-final-gp.herokuapp.com/book/search/author/?author=</string>
     <string name="search_book_details">https://helen-final-gp.herokuapp.com/book/search/detail/?book_title=</string>
     <string name="book_download">https://helen-final-gp.herokuapp.com/book/book_download/?book_title=</string>
-    <string name="create_review">post https://helen-final-gp.herokuapp.com/book/comments/create/?book_title=</string>
-    <string name="create_rating">post https://helen-final-gp.herokuapp.com/book/ratings/create/?book_title=</string>
-    <string name="ask_helen">get https://helen-final-gp.herokuapp.com/question/?question=</string>
+    <string name="create_review">https://helen-final-gp.herokuapp.com/book/comments/create/?book_title=</string>
+    <string name="create_rating">https://helen-final-gp.herokuapp.com/book/ratings/create/?book_title=</string>
+    <string name="ask_helen">https://helen-final-gp.herokuapp.com/question/?question=</string>
 </resources>

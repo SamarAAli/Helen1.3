@@ -27,35 +27,35 @@ public class BookSearch {
     public JSONObject getBookByTitle(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = R.string.search_by_book+title;
+        String _BASE_URL = activityContext.getResources().getString(R.string.search_by_book)+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getBookByAuthor(String book_author) throws Exception
     {
         String author = book_author.replace(" ","%20");
-        String _BASE_URL = R.string.search_by_author+author;
+        String _BASE_URL = activityContext.getResources().getString(R.string.search_by_author)+author;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getSimilarByTitle(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = R.string.recommend_by_book+title;
+        String _BASE_URL = activityContext.getResources().getString(R.string.recommend_by_book)+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public JSONObject getSimilarByAuthor(String book_author) throws Exception
     {
         String author = book_author.replace(" ","%20");
-        String _BASE_URL = R.string.recommend_by_author+author;
+        String _BASE_URL = activityContext.getResources().getString(R.string.recommend_by_author)+author;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
     public  JSONObject getFullBookInfo(String book_title) throws Exception
     {
         String title = book_title.replace(" ","%20");
-        String _BASE_URL = R.string.search_book_details+title;
+        String _BASE_URL = activityContext.getResources().getString(R.string.search_book_details)+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }

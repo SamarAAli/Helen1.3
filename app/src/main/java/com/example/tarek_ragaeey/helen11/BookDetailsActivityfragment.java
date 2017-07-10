@@ -46,7 +46,9 @@ import java.util.List;
         ListView listView = (ListView) rootview.findViewById(R.id.Book_Content_List_view);
         String bookDataString = getArguments().getString("JSONObject");
         try {
-            JSONObject BookDataObj = new JSONObject(bookDataString);
+            JSONObject BooksDataObj = new JSONObject(bookDataString);
+            JSONArray  BooksInfoArray = BooksDataObj.getJSONArray("booksinfo");
+            JSONObject BookDataObj = BooksInfoArray.getJSONObject(0);
             parseBookDataFromObj(BookDataObj);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -63,7 +65,9 @@ import java.util.List;
         String DESCRIPTION = bookObj.getString("description");
         String GOODREADS_RATING = bookObj.getString("goodreads_rating");
         String HELEN_RATING = bookObj.getString("helen_rating");
-        USER_RATING = bookObj.getString("user_rating");
+        //String HELEN_RATING = bookObj.getString("user_ratings");
+        USER_RATING = bookObj.getString("user_ratings");
+        //USER_RATING = null;
         Referer = bookObj.getString("referer");
         downloadLink = bookObj.getString("download_link");
         JSONArray REVIEWS = bookObj.getJSONArray("comments");
