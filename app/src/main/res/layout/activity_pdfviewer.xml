@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:background="@color/colorWhite"
+    android:orientation="vertical"
     tools:context="com.example.tarek_ragaeey.helen11.MainActivity">
 
     <com.github.barteksc.pdfviewer.PDFView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.85"
         android:id="@+id/pdfView" />
-</RelativeLayout>
+    <Button
+        android:id="@+id/ask_helen_search"
+        android:layout_width="match_parent"
+        android:layout_weight="0.15"
+
+        android:layout_height="0dp"
+        android:text="@string/voiceButton"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorWhite"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@color/colorPrimary"
+        android:textStyle="bold"/>
+</LinearLayout>

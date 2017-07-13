@@ -36,8 +36,7 @@ import java.util.Locale;
 public class PDFViewer extends AppCompatActivity implements
         TextToSpeech.OnInitListener {
 
-    private int currentWord = 0;
-    private int Page_number_of_words;
+
     private Locale currentSpokenLang = Locale.US;
     private TextToSpeech textToSpeech;
     private PDFView pdfView;

@@ -80,7 +80,7 @@
     <Button
         android:id="@+id/ask_helen_search"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="130dp"
         android:text="@string/voiceButton"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold"

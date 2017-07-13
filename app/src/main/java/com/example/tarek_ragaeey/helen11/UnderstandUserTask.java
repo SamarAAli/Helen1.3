@@ -1,5 +1,6 @@
 package com.example.tarek_ragaeey.helen11;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -32,7 +33,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
 
         try {
             String query=strings[0].replaceAll(" ","%20");
-            url = new URL(R.string.ask_helen+query);
+            url = new URL("https://helen-final-gp.herokuapp.com/question/?question="+query);
 
             urlConnection = (HttpURLConnection) url.openConnection();
       /*      urlConnection.setRequestProperty("Authorization",);
