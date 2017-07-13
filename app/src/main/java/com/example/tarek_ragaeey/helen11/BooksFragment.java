@@ -72,8 +72,8 @@ public class BooksFragment extends Fragment {
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // ExpectSpeechInput();
-               login();
+                ExpectSpeechInput();
+               //login();
             }
         });
 
