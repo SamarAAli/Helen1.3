@@ -27,6 +27,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
 
+        String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhbWFkYW4iLCJvcmlnX2lhdCI6MTQ5OTk3NDg2MCwidXNlcl9pZCI6MSwiZW1haWwiOiJyYW1hZGFuYWhtZWRyYW1hZGFuOTNAeWFob28uY29tIiwiZXhwIjoxNTAwMDYxMjYwfQ.K2d39TfAaz_SxODYO00NkTCbSZ8oMTmguNB36B4AHM8";
         URL url;
     /*    String JWTauth="JWT "+token;
     */    HttpURLConnection urlConnection = null;
@@ -38,6 +39,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
             urlConnection = (HttpURLConnection) url.openConnection();
       /*      urlConnection.setRequestProperty("Authorization",);
       */
+            urlConnection.setRequestProperty ("Authorization", basicAuth);
             InputStream in = urlConnection.getInputStream();
 
             InputStreamReader reader = new InputStreamReader(in);

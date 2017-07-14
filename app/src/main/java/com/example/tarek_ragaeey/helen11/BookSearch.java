@@ -82,7 +82,9 @@ public class BookSearch {
         }
         @Override
         protected JSONObject doInBackground(String... params) {
+            String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhbWFkYW4iLCJvcmlnX2lhdCI6MTQ5OTk3NDg2MCwidXNlcl9pZCI6MSwiZW1haWwiOiJyYW1hZGFuYWhtZWRyYW1hZGFuOTNAeWFob28uY29tIiwiZXhwIjoxNTAwMDYxMjYwfQ.K2d39TfAaz_SxODYO00NkTCbSZ8oMTmguNB36B4AHM8";
             HttpURLConnection urlConnection = null;
+
             BufferedReader reader = null;
             String BooksJsonStr = null;
             try {
@@ -90,6 +92,7 @@ public class BookSearch {
                 URL url = new URL(builtUri.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty ("Authorization", basicAuth);
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
