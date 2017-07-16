@@ -11,7 +11,8 @@
     <Button
         android:id="@+id/ask_helen_details"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
+        android:layout_weight="0.15"
         android:text="@string/voiceButton"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_below="@+id/Book_Content_List_view"

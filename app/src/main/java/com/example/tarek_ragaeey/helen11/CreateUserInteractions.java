@@ -67,6 +67,7 @@ public class CreateUserInteractions {
         @Override
         protected JSONObject doInBackground(String... params)
         {
+            String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             String reviewJsonstring = null;
@@ -77,6 +78,7 @@ public class CreateUserInteractions {
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setReadTimeout(10000);
                 urlConnection.setConnectTimeout(15000);
+                urlConnection.setRequestProperty ("Authorization", basicAuth);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setDoInput(true);
                 urlConnection.setDoOutput(true);

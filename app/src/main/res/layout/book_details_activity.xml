@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/background"
     tools:context="com.example.tarek_ragaeey.helen11.BookDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -24,6 +25,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background"
         android:layout_marginTop="60dp"
         android:id="@+id/book_details_fragment" />
 </android.support.design.widget.CoordinatorLayout>

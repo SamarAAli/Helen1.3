@@ -15,8 +15,6 @@
 
 
         <!-- Name Label -->
-
-
             <EditText android:id="@+id/input_name"
                 android:layout_width="match_parent"
                 android:layout_marginTop="8dp"
@@ -73,10 +71,14 @@
             android:text="Create Account"/>
 
         <Button
-            android:id="@+id/ask_helen"
+            android:id="@+id/ask_helen_signup"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:text="Ask Helen" />
+            android:layout_height="100dp"
+            android:layout_weight="0.15"
+            android:text="@string/voiceButton"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            android:layout_alignParentBottom="true" />
 
     </LinearLayout>
 </ScrollView>

@@ -14,14 +14,18 @@
 
         android:id="@+id/listview_books"
         android:layout_width="wrap_content"
-
         android:layout_height="328dp" />
 
     <Button
-        android:id="@+id/ask_helen"
+        android:id="@+id/ask_helen_home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Ask Helen"
-        android:layout_weight="0.73" />
+        android:layout_height="100dp"
+        android:layout_weight="0.15"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/voiceButton"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -67,7 +67,7 @@ public class BooksFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View rootView = inflater.inflate(R.layout.fragment_books, container, false);
-        Button askHelen=(Button) rootView.findViewById(R.id.ask_helen);
+        Button askHelen=(Button) rootView.findViewById(R.id.ask_helen_home);
         askHelen.setOnClickListener(
                 new View.OnClickListener() {
             @Override

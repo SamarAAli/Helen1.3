@@ -93,7 +93,8 @@ import java.util.List;
         authors.setText(authorsName);
 
         ImageView Poster = (ImageView) headerview.findViewById(R.id.object_poster);
-        Picasso.with(getContext()).load(IMAGEURL).resize(270,270).onlyScaleDown().into(Poster);
+        Picasso.with(getContext()).load(IMAGEURL).fit().centerInside().into(Poster);
+                //resize(270,270).onlyScaleDown().into(Poster);
 
         TextView OverView = (TextView) headerview.findViewById(R.id.object_desc);
         OverView.setText(DESCRIPTION);

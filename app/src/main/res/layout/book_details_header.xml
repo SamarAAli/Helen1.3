@@ -4,6 +4,7 @@
     tools:context="com.example.tarek_ragaeey.helen11.BookDetailsActivityfragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background"
     android:layout_gravity="center"
     android:layout_marginTop="20dp"
     android:orientation="vertical"
@@ -13,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@color/background"
         android:textStyle="bold"
         android:id="@+id/object_title"
         android:paddingTop="10dp"
@@ -22,10 +24,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="141dp"
+        android:background="@color/background"
         android:id="@+id/relativeLayout1">
         <ImageView
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:id="@+id/object_poster"
             android:layout_alignParentTop="true"

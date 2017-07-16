@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="#444466"
+    android:background="@color/background"
     android:id="@+id/parent_Relative">
 
     <ImageView

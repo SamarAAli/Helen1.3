@@ -29,7 +29,8 @@ public class BookSearch {
         String title = book_title.replace(" ","%20");
         String _BASE_URL = activityContext.getResources().getString(R.string.search_by_book)+title;
         SearchAsyhTask searchTask = new SearchAsyhTask();
-        return searchTask.execute(_BASE_URL).get();
+        JSONObject bookInfo =searchTask.execute(_BASE_URL).get();
+        return bookInfo;
     }
     public JSONObject getBookByAuthor(String book_author) throws Exception
     {
@@ -82,7 +83,7 @@ public class BookSearch {
         }
         @Override
         protected JSONObject doInBackground(String... params) {
-            String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhbWFkYW4iLCJvcmlnX2lhdCI6MTQ5OTk3NDg2MCwidXNlcl9pZCI6MSwiZW1haWwiOiJyYW1hZGFuYWhtZWRyYW1hZGFuOTNAeWFob28uY29tIiwiZXhwIjoxNTAwMDYxMjYwfQ.K2d39TfAaz_SxODYO00NkTCbSZ8oMTmguNB36B4AHM8";
+            String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
             HttpURLConnection urlConnection = null;
 
             BufferedReader reader = null;
