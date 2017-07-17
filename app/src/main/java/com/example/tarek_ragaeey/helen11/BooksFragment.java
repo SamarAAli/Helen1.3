@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -43,9 +45,11 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BooksFragment extends Fragment {
+public class BooksFragment extends Fragment  implements
+        TextToSpeech.OnInitListener {
 
-
+    private TextToSpeech textToSpeech;
+    HashMap<String, String> TTSmap = new HashMap<String, String>();
     public BooksFragment() {
         // Required empty public constructor
     }
@@ -78,7 +82,8 @@ public class BooksFragment extends Fragment {
                //login();
             }
         });
-
+        textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
+        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
         SharedPreferences sharedPreferences=getActivity().getSharedPreferences("com.example.tarek_ragaeey.helen11", Context.MODE_PRIVATE);
 
         BookList=sharedPreferences.getStringSet("books",null);
@@ -116,16 +121,23 @@ public class BooksFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_books);
         listView.setAdapter(mBooksAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
 
                 String uri=Books.get(i);
                 Intent intent = new Intent(getActivity(), PDFViewer.class);
                 intent.putExtra("uri", uri);
                 startActivity(intent);
+                return false;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                textToSpeech.speak(BooksNames.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
             }
         });
 
@@ -283,4 +295,8 @@ public class BooksFragment extends Fragment {
     }
 
 
+    @Override
+    public void onInit(int i) {
+
+    }
 }

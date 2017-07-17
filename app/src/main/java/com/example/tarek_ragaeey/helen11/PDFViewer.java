@@ -1,6 +1,7 @@
 package com.example.tarek_ragaeey.helen11;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.RemoteException;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class PDFViewer extends AppCompatActivity implements
         TextToSpeech.OnInitListener {
@@ -109,6 +112,14 @@ public class PDFViewer extends AppCompatActivity implements
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+        bt.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                ExpectSpeechInput();
+                return false;
             }
         });
         pdfView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -366,6 +377,69 @@ public class PDFViewer extends AppCompatActivity implements
                                   }
                               }
         });
+
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+         if((requestCode == 100) && (data != null) ){
+
+            // Store the data sent back in an ArrayList
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            if(spokenText.equals("exit"))
+            {
+                Intent i=new Intent(this,MainActivity.class);
+                startActivity(i);
+            }
+            else if(spokenText.equals("play"))
+            {
+                try {
+                    play_pause();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    public void ExpectSpeechInput() {
+
+        if(textToSpeech.isSpeaking())
+        {
+            try {
+                play_pause();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_phrase));
+
+        try{
+
+            startActivityForResult(intent, 100);
+
+        } catch (ActivityNotFoundException e){
+
+            Toast.makeText(this,R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+
+        }
 
     }
 

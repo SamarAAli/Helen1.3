@@ -27,7 +27,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
 
-        String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
+        String basicAuth="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJleHAiOjE1MDAzNjUwMzMsInVzZXJuYW1lIjoicmFtYWRhbiIsIm9yaWdfaWF0IjoxNTAwMjc4NjMzfQ.r-KdY14K9d-4VpRfh2cfIsQ_iq38uGosDrCzqFIIkWQ";
         URL url;
     /*    String JWTauth="JWT "+token;
     */    HttpURLConnection urlConnection = null;

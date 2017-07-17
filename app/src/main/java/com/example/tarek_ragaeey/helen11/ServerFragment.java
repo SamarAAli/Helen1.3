@@ -12,6 +12,7 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ public class ServerFragment extends Fragment implements
     String BookTitle="";
     private TextToSpeech textToSpeech;
     HashMap<String, String> TTSmap = new HashMap<String, String>();
-
+    private boolean YesOrNo=false;
     /////////////////////////////////////////////////////////
     private Locale currentSpokenLang = Locale.US;
 
@@ -69,6 +70,16 @@ public class ServerFragment extends Fragment implements
 
 
         return root;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+        {
+            textToSpeech.speak(" Hi Tarek", TextToSpeech.QUEUE_FLUSH, TTSmap) ;
+        }
+
     }
 
     @Override
@@ -152,6 +163,40 @@ public class ServerFragment extends Fragment implements
 
 
 ///////////////////////////////////////////////////////////////////////
+   /* public void YesorNo()
+    {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("Confirm");
+
+        // Set up the input
+        final EditText input = new EditText(getActivity());
+
+
+
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        // input.setHint(pdfView.getCurrentPage());
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }*/
+
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -168,6 +213,9 @@ public class ServerFragment extends Fragment implements
                {
 
                }
+            /*    YesorNo();
+                if(YesOrNo==false)
+                    return;*/
 
              try {
                  Result= task.execute(spokenText.get(0)).get();
@@ -219,6 +267,10 @@ public class ServerFragment extends Fragment implements
              } catch (Exception e) {
                  e.printStackTrace();
              }
+         }
+         else if((requestCode == 130) && (data != null))
+         {
+             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
          }
         super.onActivityResult(requestCode, resultCode, data);
     }
