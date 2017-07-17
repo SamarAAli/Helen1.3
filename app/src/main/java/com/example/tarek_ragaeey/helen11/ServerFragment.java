@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -17,19 +18,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class ServerFragment extends Fragment  {
-    private FragmentListener flisttener;
+public class ServerFragment extends Fragment implements
+        TextToSpeech.OnInitListener{
     private AlertDialog alertDialog;
     private BookSearch searcher;
-    private boolean authorInfo = false;
+    private boolean authorCheck = false;
+    String BookTitle="";
+    private TextToSpeech textToSpeech;
+    HashMap<String, String> TTSmap = new HashMap<String, String>();
+
     public ServerFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,17 +47,37 @@ public class ServerFragment extends Fragment  {
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            search();
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                final String[] choices = {"Book","Author"};
+                dialogBuilder.setTitle("Select Search Preference:");
+                dialogBuilder = dialogBuilder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        String selectedChoice = choices[i];
+                        if (selectedChoice == "Author")
+                            authorCheck = true;
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog ChoicesDialog = dialogBuilder.create();
+                ChoicesDialog.show();
+                ChoicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(final DialogInterface arg0) {
+                        search();
+                    }
+                });
             }
         });
-        Button mAsk=(Button)root.findViewById(R.id.ask_helen_search);
+        ImageButton mAsk=(ImageButton) root.findViewById(R.id.ask_helen_search);
         mAsk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ExpectSpeechInput();
             }
         });
-
+        textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
+        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
         return root;
     }
     public boolean isOnline(Context context) {
@@ -75,45 +102,9 @@ public class ServerFragment extends Fragment  {
     public void search()
     {
         EditText search_Query=(EditText) getActivity().findViewById(R.id.input_text);
-        /*search_Query.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        yourEditText.setFocusable(true);
-                        yourEditText.requestFocus();
-                        yourEditText.setSelection(emailEditText.getText().length());
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        v.performClick();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-
-            }
-        });*/
-                /*setOnClickListener(new  View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                final String[] choices = {"Book","Author"};
-                dialogBuilder.setTitle("Select Search Preference:");
-                dialogBuilder = dialogBuilder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        String selectedChoice = choices[i];
-                        if (selectedChoice == "Author")
-                            authorInfo = true;
-                    }
-                });
-                AlertDialog ChoicesDialog = dialogBuilder.create();
-                ChoicesDialog.show();
-            }
-        });*/
         RadioButton isSearch = (RadioButton) getActivity().findViewById(R.id.search_radio_btn);
         RadioButton isTitle = (RadioButton) getActivity().findViewById(R.id.title_radio_btn);
+        RadioButton isAuthor = (RadioButton) getActivity().findViewById(R.id.author_radio_btn);
         if(search_Query != null)
         {
             Context context = getActivity();
@@ -121,10 +112,18 @@ public class ServerFragment extends Fragment  {
             if(isOnline(context)) {
                 searcher = new BookSearch(getActivity());
                 JSONObject bookInfo = null;
+                JSONObject authorInfo = null;
                 try {
-                    if(authorInfo)
+                    if(authorCheck)
                     {
-
+                        if(isAuthor.isChecked())
+                        {
+                            authorInfo = searcher.getAuthorByName(query);
+                        }
+                        else
+                        {
+                            authorInfo = searcher.getAuthorInfoByTitle(query);
+                        }
                     }
                     else
                     {
@@ -155,8 +154,16 @@ public class ServerFragment extends Fragment  {
                     e.printStackTrace();
                     Log.e("Error:",e.toString());
                 }
-                Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action","search");
-                startActivity(intent);
+                if(authorCheck)
+                {
+                    Intent intent = new Intent(getActivity(), AuthorDetailsActivity.class).putExtra("JSONObject", authorInfo.toString());
+                    startActivity(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action","search");
+                    startActivity(intent);
+                }
             }else
                 showDialogMsg("Please check your internet connection!");
         }
@@ -171,30 +178,190 @@ public class ServerFragment extends Fragment  {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-         if((requestCode == 100) && (data != null) ){
+        if((requestCode == 100) && (data != null) ){
 
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-             ArrayList<String> Result=new ArrayList<>();
-             UnderstandUserTask task=new UnderstandUserTask();
-             try {
-                 Result= task.execute(spokenText.get(0)).get();
-                 Intent i=new Intent(getActivity(),TransitActivity.class);
-                 i.putExtra("query_class",Result.get(0));
-                 i.putExtra("entity",Result.get(1));
-                 i.putExtra("type",Result.get(2));
-                 startActivity(i);
+            ArrayList<String> Result=new ArrayList<>();
+            UnderstandUserTask task=new UnderstandUserTask();
+            textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+            while(textToSpeech.isSpeaking())
+            {
 
+            }
+            /*    YesorNo();
+                if(YesOrNo==false)
+                    return;*/
 
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             } catch (ExecutionException e) {
-                 e.printStackTrace();
-             }
+            try {
+                Result= task.execute(spokenText.get(0)).get();
+                if(Result.get(0).equals("")||Result.get(1).equals("")||Result.get(2).equals(""))
+                {
+                    textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    return;
+                }
+
+                if(Result.get(0).equals("WriteRating"))
+                {
+                    if(!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        ExpectRate();
+                    }
+                    else
+                    {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while(textToSpeech.isSpeaking())
+                        {
+
+                        }
+
+                    }
+                }
+                else if(Result.get(0).equals("WriteReview"))
+                {
+                    if(!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        ExpectReview();
+                    }
+                    else
+                    {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while(textToSpeech.isSpeaking())
+                        {
+
+                        }
+
+                    }
+                }
+                else {
+                    Intent i = new Intent(getActivity(), TransitActivity.class);
+                    i.putExtra("query_class", Result.get(0));
+
+                    i.putExtra("entity", Result.get(1));
+                    i.putExtra("type", Result.get(2));
+                    startActivity(i);
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
 
         }
+        else if((requestCode == 110) && (data != null))
+        {
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+            float Rating= (float) 1.1;
+            try {
+                Rating=Float.parseFloat(spokenText.get(0));
+            } catch (NumberFormatException e) {
+                textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                while(textToSpeech.isSpeaking())
+                {
+
+                }
+                ExpectRate();
+                return;
+
+
+            }
+
+
+            try {
+                Interaction.createRating(Rating,BookTitle);
+                textToSpeech.speak("Adding your rate is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+                while(textToSpeech.isSpeaking())
+                {
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if((requestCode == 120) && (data != null))
+        {
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+            try {
+                Interaction.createReview(spokenText.get(0),BookTitle);
+                textToSpeech.speak("Adding your review is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+                while(textToSpeech.isSpeaking())
+                {
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    public void ExpectRate()
+    {
+
+        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        while(textToSpeech.isSpeaking())
+        {
+
+        }        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Rate));
+        try{
+            startActivityForResult(intent, 110);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
+    }
+    public void ExpectReview()
+    {
+
+        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        while(textToSpeech.isSpeaking())
+        {
+
+        }
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Review));
+        try{
+            startActivityForResult(intent, 120);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
     }
     public void ExpectSpeechInput() {
 
@@ -216,6 +383,13 @@ public class ServerFragment extends Fragment  {
         } catch (ActivityNotFoundException e){
             Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    @Override
+    public void onInit(int i) {
+
+
     }
 
 }
