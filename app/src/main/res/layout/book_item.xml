@@ -7,8 +7,8 @@
     android:id="@+id/parent_Relative">
 
     <ImageView
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:scaleType="fitXY"
         android:id="@+id/poster_list_item_image">
     </ImageView>

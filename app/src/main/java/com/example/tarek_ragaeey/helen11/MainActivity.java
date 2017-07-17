@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity   {
+public class MainActivity extends AppCompatActivity implements
+        TextToSpeech.OnInitListener   {
+    private TextToSpeech textToSpeech;
+    HashMap<String, String> TTSmap = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,21 @@ public class MainActivity extends AppCompatActivity   {
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+        textToSpeech = new TextToSpeech(this, (TextToSpeech.OnInitListener) this);
+        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                if(position==0)
+                {
+                    textToSpeech.speak("Showing books in a scroll view and you can use the button down the page to issue a command ", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                }
+                else if(position==1)
+                {
+                    textToSpeech.speak("Search Tab", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                }
+            }
+        });
 
     }
 
@@ -154,6 +172,11 @@ public class MainActivity extends AppCompatActivity   {
             Toast.makeText(this,R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
 
         }
+
+    }
+
+    @Override
+    public void onInit(int i) {
 
     }
 

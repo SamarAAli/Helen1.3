@@ -1,5 +1,6 @@
 package com.example.tarek_ragaeey.helen11;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -24,11 +25,12 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     String Entity=""; // returned entity of the query ex: lord of the rings
     String Type=""; // returned entity of the query ex: book or author
     String token="";
+    private Activity activityContext;
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
 
-        String basicAuth="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJleHAiOjE1MDAzNjUwMzMsInVzZXJuYW1lIjoicmFtYWRhbiIsIm9yaWdfaWF0IjoxNTAwMjc4NjMzfQ.r-KdY14K9d-4VpRfh2cfIsQ_iq38uGosDrCzqFIIkWQ";
-        URL url;
+        String basicAuth="JWT "+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1MDAzNzA4MTEsImVtYWlsIjoicmFtYWRhbmFobWVkcmFtYWRhbjkzQHlhaG9vLmNvbSIsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoicmFtYWRhbiIsIm9yaWdfaWF0IjoxNTAwMjg0NDExfQ.Y6qWXIuc2sZs3haZCamSwR5ZVsRzp0M4HUvjxKoSmdM";
+                 URL url;
     /*    String JWTauth="JWT "+token;
     */    HttpURLConnection urlConnection = null;
 
@@ -59,11 +61,17 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
             JSONArray arr=new JSONArray(result);
             JSONObject root = arr.getJSONObject(0);
             queryClass=root.getString("intent");
-            JSONArray Entity_Type=root.getJSONArray("entities");
-            JSONObject EntityAndType=Entity_Type.getJSONObject(0);
+            JSONObject EntityAndType=new JSONObject();
 
-            Entity=EntityAndType.getString("entity");
-            Type=EntityAndType.getString("type");
+             JSONArray Entity_Type = root.getJSONArray("entities");
+            if(Entity_Type!=null&&Entity_Type.length()>0)
+            {
+                EntityAndType = Entity_Type.getJSONObject(0);
+                Entity=EntityAndType.getString("entity");
+                Type=EntityAndType.getString("type");
+            }
+
+
             Result.add(queryClass);
             Result.add(Entity);
             Result.add(Type);

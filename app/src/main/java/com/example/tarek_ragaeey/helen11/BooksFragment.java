@@ -149,6 +149,15 @@ public class BooksFragment extends Fragment  implements
         startActivity(i);
     }
 
+    /*@Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+        {
+            textToSpeech.speak(" Hi . showing  books and you can use the button down the page to issue command    " , TextToSpeech.QUEUE_FLUSH, TTSmap) ;
+        }
+    }
+*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);

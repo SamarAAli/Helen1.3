@@ -1,7 +1,12 @@
 package com.example.tarek_ragaeey.helen11;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -11,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -21,9 +27,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
- public class BookDetailsActivityfragment extends Fragment {
+public class BookDetailsActivityfragment extends Fragment implements
+        TextToSpeech.OnInitListener{
     private BookDetailsAdapter detailsAdapter;
     private String BOOK_TITLE,USER_RATING;
     private String downloadLink,Referer,review;
@@ -31,7 +41,13 @@ import java.util.List;
     private BookDownload downloader;
     private RatingBar user_rating;
     private View headerview;
+
     private Button downloadButton;
+    //////////////////////////////////////////////////////////////////// Tarek
+    private TextToSpeech textToSpeech;
+    HashMap<String, String> TTSmap = new HashMap<String, String>();
+    private String BookTitleRateReview="";
+    ////////////////////////////////////////////////////////////////////
     private CreateUserInteractions interactor;
     public  BookDetailsActivityfragment() {}
     @Override
@@ -55,8 +71,23 @@ import java.util.List;
         }
         listView.addHeaderView(headerview);
         listView.setAdapter(detailsAdapter);
+      ///////////////////////////////////////////////////////////////////////////////////////////// Tarek
+        textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
+        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+
+        ImageButton mAsk=(ImageButton) rootview.findViewById(R.id.tarek_edit);
+        mAsk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExpectSpeechInput();
+            }
+        });
+
+        ///////////////////////////////////////////////////////////////////////////////////////
         return rootview;
     }
+
+
 
     private void parseBookDataFromObj(JSONObject bookObj) throws JSONException{
         BOOK_TITLE = bookObj.getString("title");
@@ -190,4 +221,173 @@ import java.util.List;
             }
         });
     }
+    ///////////////////////////////////////////////////////////////////////////////////Tarek
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if((requestCode == 100) && (data != null) ){
+
+            // Store the data sent back in an ArrayList
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            ArrayList<String> Result=new ArrayList<>();
+            UnderstandUserTask task=new UnderstandUserTask();
+            textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+            while(textToSpeech.isSpeaking())
+            {
+
+            }
+            /*    YesorNo();
+                if(YesOrNo==false)
+                    return;*/
+
+            try {
+                Result= task.execute(spokenText.get(0)).get();
+                if(Result.get(0).equals("WriteRating"))
+                {
+                    if(!Result.get(1).equals(""))
+                        BookTitleRateReview=Result.get(1);
+                        else
+                            BookTitleRateReview=BOOK_TITLE;
+                    ExpectRate();
+                }
+
+                else if(Result.get(0).equals("WriteReview"))
+                {
+                    if(!Result.get(1).equals(""))
+                        BookTitleRateReview=Result.get(1);
+                    else
+                        BookTitleRateReview=BOOK_TITLE;
+                    ExpectReview();
+                }
+                else if(Result.get(0).equals("Summary"))
+                {
+
+                }
+                else {
+                    Intent i = new Intent(getActivity(), TransitActivity.class);
+                    i.putExtra("query_class", Result.get(0));
+
+                    i.putExtra("entity", Result.get(1));
+                    i.putExtra("type", Result.get(2));
+                    startActivity(i);
+                }
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else if((requestCode == 110) && (data != null))
+        {
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+            Float Rating=Float.parseFloat(spokenText.get(0));
+            try {
+                Interaction.createRating(Rating,BookTitleRateReview);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if((requestCode == 120) && (data != null))
+        {
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+            CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+            try {
+                Interaction.createReview(spokenText.get(0),BookTitleRateReview);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    public void ExpectRate()
+    {
+        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        while(textToSpeech.isSpeaking())
+        {
+
+        }
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Rate));
+        try{
+            startActivityForResult(intent, 110);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void ExpectSpeechInput() {
+
+
+
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_phrase));
+        try{
+            startActivityForResult(intent, 100);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
+    }
+    public void ExpectReview()
+    {
+        textToSpeech.speak("Say your review", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        while(textToSpeech.isSpeaking())
+        {
+
+        }
+
+
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Review));
+        try{
+            startActivityForResult(intent, 120);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public void onInit(int i) {
+
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////// Tarek
 }
