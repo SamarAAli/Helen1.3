@@ -65,6 +65,34 @@ public class BookSearch {
         SearchAsyhTask searchTask = new SearchAsyhTask();
         return searchTask.execute(_BASE_URL).get();
     }
+    public JSONObject getAuthorInfoByTitle(String book_title) throws Exception
+    {
+        String title = book_title.replace(" ","%20");
+        String _BASE_URL = activityContext.getResources().getString(R.string.search_author_by_title)+title;
+        SearchAsyhTask searchTask = new SearchAsyhTask();
+        return searchTask.execute(_BASE_URL).get();
+    }
+    public  JSONObject getAuthorByName (String book_author) throws Exception
+    {
+        String author = book_author.replace(" ","%20");
+        String _BASE_URL = activityContext.getResources().getString(R.string.search_author_by_name)+author;
+        SearchAsyhTask searchTask = new SearchAsyhTask();
+        return searchTask.execute(_BASE_URL).get();
+    }
+    public JSONObject getComments(String book_title) throws Exception
+    {
+        String title = book_title.replace(" ", "%20");
+        String _BASE_URL = activityContext.getResources().getString(R.string.get_user_comments) + title;
+        SearchAsyhTask searchTask = new SearchAsyhTask();
+        return searchTask.execute(_BASE_URL).get();
+    }
+    public JSONObject getRatings(String book_title) throws Exception
+    {
+        String title = book_title.replace(" ", "%20");
+        String _BASE_URL = activityContext.getResources().getString(R.string.get_user_ratings) + title;
+        SearchAsyhTask searchTask = new SearchAsyhTask();
+        return searchTask.execute(_BASE_URL).get();
+    }
     private void showDialogMsg(String msg) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activityContext);
         alertDialogBuilder.setMessage(msg);

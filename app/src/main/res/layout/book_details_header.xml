@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@+id/download_button"
             android:layout_alignRight="@+id/download_button"
-            android:layout_marginTop="15dp"
             android:layout_below="@+id/download_button"
+            android:layout_marginTop="15dp"
             android:text="5.0/5.0"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/holo_blue_light"
@@ -77,9 +77,9 @@
             android:id="@+id/view3"
             android:layout_width="100dp"
             android:layout_height="1dp"
-            android:layout_below="@+id/goodreads_icon"
-            android:layout_alignStart="@+id/goodreads_icon"
             android:layout_alignLeft="@+id/helen_rating"
+            android:layout_alignStart="@+id/goodreads_icon"
+            android:layout_below="@+id/goodreads_icon"
             android:background="@color/colorPrimary2" />
 
         <ImageView
@@ -112,13 +112,13 @@
             android:layout_alignRight="@+id/helen_rating"
             android:layout_below="@+id/helen_icon"
             android:layout_marginTop="18dp"
+            android:layout_toEndOf="@+id/helen_icon"
+            android:layout_toRightOf="@+id/helen_icon"
             android:isIndicator="true"
             android:max="5"
             android:numStars="5"
             android:rating="0"
-            android:stepSize="1"
-            android:layout_toRightOf="@+id/helen_icon"
-            android:layout_toEndOf="@+id/helen_icon" />
+            android:stepSize="1" />
 
     </RelativeLayout>
 

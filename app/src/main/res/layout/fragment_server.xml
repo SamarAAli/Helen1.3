@@ -25,6 +25,7 @@
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
+        android:imeOptions="actionNext"
         android:ems="10"
         android:inputType="textMultiLine"
         android:layout_below="@+id/search_view"
@@ -95,10 +96,9 @@
         android:layout_height="190dp"
         android:background="@null"
         android:scaleType="centerInside"
-
         android:layout_weight="0.15"
-        android:layout_below="@+id/radio_btn_gp1"
-        android:layout_centerInParent="true"
         android:src="@drawable/mic_icon"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/radio_btn_gp1"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

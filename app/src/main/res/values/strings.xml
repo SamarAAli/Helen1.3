@@ -21,6 +21,7 @@
     <string name="listview_title">Book Reviews</string>
     <string name="download">Download</string>
     <string name="add_review">Add A Review</string>
+    <string name="author_about">About Author</string>
     <!-- Search Activity Textviews -->
     <string name="hint">Enter Book Name or Author name</string>
     <string name="seachRdBtn">Search Books</string>
@@ -28,8 +29,8 @@
     <string name="titleRdBtn">Search By Title</string>
     <string name="authorRdBtn">Search By Author</string>
     <!-- App URLs -->
-    <string name="login">https://helen-final-gp.herokuapp.com/user/login/?username=</string>
-    <string name="signUp">https://helen-final-gp.herokuapp.com/user/register/?username=</string>
+    <string name="login">https://helen-final-gp.herokuapp.com/user/login/</string>
+    <string name="signUp">https://helen-final-gp.herokuapp.com/user/register/</string>
     <string name="book_suggestion">https://helen-final-gp.herokuapp.com/book/suggestions/?book_title=</string>
     <string name="recommend_by_book">https://helen-final-gp.herokuapp.com/book/recommend/book/?book_title=</string>
     <string name="recommend_by_author">https://helen-final-gp.herokuapp.com/book/recommend/author/?author=</string>
@@ -39,6 +40,10 @@
     <string name="book_download">https://helen-final-gp.herokuapp.com/book/book_download/?book_title=</string>
     <string name="create_review">https://helen-final-gp.herokuapp.com/book/comments/create/</string>
     <string name="create_rating">https://helen-final-gp.herokuapp.com/book/ratings/create/</string>
+    <string name="search_author_by_name">https://http://helen-final-gp.herokuapp.com/book/author_info/?author=</string>
+    <string name="search_author_by_title">https://http://helen-final-gp.herokuapp.com/book/author_info/?book_title=</string>
+    <string name="get_user_comments">https://helen-final-gp.herokuapp.com/book/comments_list/?book_title=</string>
+    <string name="get_user_ratings">https://helen-final-gp.herokuapp.com/book/ratings_list/?book_title=</string>
     <string name="ask_helen">https://helen-final-gp.herokuapp.com/question/?question=</string>
 
     <!--User Token-->
