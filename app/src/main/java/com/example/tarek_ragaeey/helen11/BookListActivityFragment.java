@@ -25,7 +25,6 @@ public class BookListActivityFragment extends Fragment {
     private List<JSONObject> BookList ;
     private JSONObject BookFullData;
     private AlertDialog alertDialog;
-    private String BOOK_TITLE;
     public BookListActivityFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +37,8 @@ public class BookListActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 BookSearch searcher = new BookSearch(getActivity());
                 try {
+                    JSONObject bookObj = BooksAdapter.getItem(position);
+                    String BOOK_TITLE = getBookTitle(bookObj);
                     BookFullData = searcher.getFullBookInfo(BOOK_TITLE);
                     flistener.setDetailsData(BookFullData);
                 }catch (Exception e)
@@ -94,11 +95,15 @@ public class BookListActivityFragment extends Fragment {
             showDialogMsg("Please check your internet connection!");
     }
 
+    private String getBookTitle(JSONObject book) throws JSONException
+    {
+        String result = book.getString("title");
+        return result;
+    }
     private List<JSONObject> getBooksDataFromJson(String BooksDataString)throws JSONException {
         final String _INFO = "booksinfo";
         JSONObject booksJson = new JSONObject(BooksDataString);
         JSONArray booksArray = booksJson.getJSONArray(_INFO);
-        BOOK_TITLE = booksJson.getString("query_param");
         List<JSONObject> resultStrs = new ArrayList<JSONObject>() ;
         for(int i = 0; i < booksArray.length(); i++)
         {

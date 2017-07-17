@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +31,7 @@ import java.util.List;
     private BookDownload downloader;
     private RatingBar user_rating;
     private View headerview;
+    private Button downloadButton;
     private CreateUserInteractions interactor;
     public  BookDetailsActivityfragment() {}
     @Override
@@ -53,11 +53,11 @@ import java.util.List;
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         listView.addHeaderView(headerview);
         listView.setAdapter(detailsAdapter);
         return rootview;
     }
+
     private void parseBookDataFromObj(JSONObject bookObj) throws JSONException{
         BOOK_TITLE = bookObj.getString("title");
         String AUTHOR = bookObj.getString("author");
@@ -66,9 +66,7 @@ import java.util.List;
         String DESCRIPTION = bookObj.getString("description");
         String GOODREADS_RATING = bookObj.getString("goodreads_rating");
         String HELEN_RATING = bookObj.getString("helen_rating");
-        //String HELEN_RATING = bookObj.getString("user_ratings");
-     //   USER_RATING = bookObj.getString("user_ratings");
-        //USER_RATING = null;
+        USER_RATING = bookObj.getString("user_rating");
         Referer = bookObj.getString("referer");
         downloadLink = bookObj.getString("download_link");
         JSONArray REVIEWS = bookObj.getJSONArray("comments");
@@ -87,15 +85,14 @@ import java.util.List;
         }
 
         TextView Title = (TextView) headerview.findViewById(R.id.object_title);
-        Title.setText(BOOK_TITLE);
+        Title.setText(BOOK_TITLE+"   by "+AUTHOR);
 
-        TextView authors = (TextView) headerview.findViewById(R.id.object_author);
+        /*TextView authors = (TextView) headerview.findViewById(R.id.object_author);
         String authorsName = "by "+AUTHOR;
-        authors.setText(authorsName);
+        authors.setText(authorsName);*/
 
         ImageView Poster = (ImageView) headerview.findViewById(R.id.object_poster);
-        Picasso.with(getContext()).load(IMAGEURL).fit().centerInside().into(Poster);
-                //resize(270,270).onlyScaleDown().into(Poster);
+        Picasso.with(getContext()).load(IMAGEURL).resize(270,270).onlyScaleDown().into(Poster);
 
         TextView OverView = (TextView) headerview.findViewById(R.id.object_desc);
         OverView.setText(DESCRIPTION);
@@ -103,13 +100,11 @@ import java.util.List;
         TextView ReleaseDate = (TextView) headerview.findViewById(R.id.object_release_date);
         ReleaseDate.setText("Released in: "+REL_DATE);
 
-        RatingBar goodreads_rating = (RatingBar) headerview.findViewById(R.id.goodreads_rating);
-        float rate = Float.parseFloat(GOODREADS_RATING);
-        goodreads_rating.setRating(rate);
+        TextView goodreads_rating = (TextView) headerview.findViewById(R.id.goodreads_rating);
+        goodreads_rating.setText(GOODREADS_RATING+"/5.0");
 
-        RatingBar helen_ratings = (RatingBar) headerview.findViewById(R.id.helen_ratings);
-        float h_rate = Float.parseFloat(HELEN_RATING);
-        helen_ratings.setRating(h_rate);
+        TextView helen_ratings = (TextView) headerview.findViewById(R.id.helen_rating);
+        helen_ratings.setText(HELEN_RATING+"/5.0");
 
         user_rating = (RatingBar) headerview.findViewById(R.id.user_ratings);
         if(USER_RATING != null)
@@ -120,7 +115,7 @@ import java.util.List;
         user_rating.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP && USER_RATING == null) {
+                if (event.getAction() == MotionEvent.ACTION_UP ) {
                     float touchPositionX = event.getX();
                     float width = user_rating.getWidth();
                     float starsf = (touchPositionX / width) * 5.0f;
@@ -135,10 +130,10 @@ import java.util.List;
                     user_rating.setRating(stars);
                     v.setPressed(false);
                 }
-                if (event.getAction() == MotionEvent.ACTION_DOWN && USER_RATING == null) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN ) {
                     v.setPressed(true);
                 }
-                if (event.getAction() == MotionEvent.ACTION_CANCEL && USER_RATING == null) {
+                if (event.getAction() == MotionEvent.ACTION_CANCEL ) {
                     v.setPressed(false);
                 }
                 return true;
@@ -167,12 +162,12 @@ import java.util.List;
                             {
                                 detailsAdapter.clear();
                                 detailsAdapter.addAll(Adapterinput);
+                                Toast.makeText(getActivity(), "Your review has been added successfully", Toast.LENGTH_SHORT).show();
                             }
-                        }catch (Exception e)
-                        {
-                            Log.e("Error:",e.toString());
+                        }catch (Exception e) {
+                            Log.e("Error:", e.toString());
+                            Toast.makeText(getActivity(), "Error while adding review", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(getActivity(), "Your review has been added successfully", Toast.LENGTH_SHORT).show();
                     }
                 });
                 dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -185,7 +180,7 @@ import java.util.List;
                 AddReviewDialog.show();
             }
         });
-        Button downloadButton = (Button) headerview.findViewById(R.id.download_button);
+        downloadButton = (Button) headerview.findViewById(R.id.download_button);
         downloadButton.setVisibility(View.VISIBLE);
         downloadButton.setOnClickListener(new  View.OnClickListener() {
             @Override

@@ -28,6 +28,13 @@
         <item name="android:background">@color/colorAccent</item>
     </style>
 
+    <style name="viewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/viewHeight</item>
+        <item name="android:layout_marginTop">@dimen/viewTop</item>
+        <item name="android:background">@color/colorAccent</item>
+    </style>
+
     <!-- Text appearance style for a category tab -->
     <style name="CategoryTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textColor">#FFFFFF</item>

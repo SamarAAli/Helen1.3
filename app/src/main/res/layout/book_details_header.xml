@@ -1,6 +1,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.tarek_ragaeey.helen11.BookDetailsActivityfragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,44 +12,116 @@
     android:id="@+id/parent_linear">
 
     <TextView
+        android:id="@+id/object_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:background="@color/background"
-        android:textStyle="bold"
-        android:id="@+id/object_title"
-        android:paddingTop="10dp"
+        android:gravity="center"
         android:paddingBottom="10dp"
-        android:textColor="@color/colorDarkGrey"
-        android:gravity="center"/>
+        android:paddingTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/holo_blue_light"
+        android:textStyle="bold" />
+
     <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="141dp"
-        android:background="@color/background"
-        android:id="@+id/relativeLayout1">
+        android:layout_height="170dp"
+        android:background="@color/background">
+
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
             android:id="@+id/object_poster"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/download_button"
-            android:layout_toEndOf="@+id/download_button"
-            android:layout_marginRight="20dp"
-            android:layout_marginLeft="90dp"/>
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:scaleType="fitXY" />
 
         <Button
+            android:id="@+id/download_button"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="43dp"
+            android:layout_marginRight="43dp"
+            android:layout_marginTop="12dp"
             android:text="@string/download"
-            android:textColor="@color/colorDarkGrey"
-            android:id="@+id/download_button"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="51dp"/>
+            android:textColor="@color/colorDarkGrey" />
+
+        <ImageView
+            android:id="@+id/goodreads_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@+id/goodreads_rating"
+            android:layout_alignLeft="@+id/download_button"
+            android:layout_alignStart="@+id/download_button"
+            android:src="@drawable/goodreads_icon_16" />
+
+        <TextView
+            android:id="@+id/goodreads_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/download_button"
+            android:layout_alignRight="@+id/download_button"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/download_button"
+            android:text="5.0/5.0"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_light"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/view3"
+            android:layout_width="100dp"
+            android:layout_height="1dp"
+            android:layout_below="@+id/goodreads_icon"
+            android:layout_alignStart="@+id/goodreads_icon"
+            android:layout_alignLeft="@+id/helen_rating"
+            android:background="@color/colorPrimary2" />
+
+        <ImageView
+            android:id="@+id/helen_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignLeft="@+id/helen_rating"
+            android:layout_alignStart="@+id/goodreads_icon"
+            android:layout_below="@+id/view3"
+            android:src="@drawable/helen_icon" />
+
+        <TextView
+            android:id="@+id/helen_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/helen_icon"
+            android:layout_alignEnd="@+id/download_button"
+            android:layout_alignRight="@+id/download_button"
+            android:text="5.0/5.0"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/holo_blue_light"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/user_ratings"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/helen_rating"
+            android:layout_alignRight="@+id/helen_rating"
+            android:layout_below="@+id/helen_icon"
+            android:layout_marginTop="18dp"
+            android:isIndicator="true"
+            android:max="5"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize="1"
+            android:layout_toRightOf="@+id/helen_icon"
+            android:layout_toEndOf="@+id/helen_icon" />
 
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -56,118 +129,61 @@
         android:layout_weight="7.48"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-
+        <View
+            android:id="@+id/view1"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary2" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/description"
-            android:textColor="@color/colorDarkGrey"
+            android:textColor="@android:color/holo_blue_light"
             android:textStyle="bold"
-            android:id="@+id/object_desc_title"
-            android:layout_below="@+id/user_ratings" />
+            android:id="@+id/object_desc_title" />
 
-        <TextView
+       <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/object_desc"
-            android:textColor="@color/colorDarkGrey"
+            android:textColor="@color/colorWhite"
             android:layout_below="@+id/object_desc_title"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-        <TextView
+            android:layout_alignParentStart="true"/>-->
+        <com.borjabravo.readmoretextview.ReadMoreTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/object_desc"
+            android:layout_below="@+id/object_desc_title"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            app:trimExpandedText="Show more"
+            app:trimCollapsedText="Show less"
+            app:trimMode="trimModeLine"
+            app:trimLength="3"
+            app:colorClickableText="@color/colorAccent"/>
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorDarkGrey"
+            android:textColor="@android:color/holo_blue_light"
             android:id="@+id/object_author"
-            android:layout_below="@+id/object_desc" />
+            android:layout_below="@+id/object_desc" /> -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorDarkGrey"
+            android:textColor="@android:color/holo_blue_light"
             android:id="@+id/object_release_date"
-            android:layout_below="@+id/object_author"
-            android:layout_marginTop="20dp"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/goodreads_rating"
-            android:textStyle="bold"
-            android:textColor="@color/colorDarkGrey"
-            android:id="@+id/goodreads_rating_title"
-            android:layout_alignLeft="@+id/goodreads_rating"
-            android:layout_alignStart="@+id/goodreads_rating"/>
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:stepSize="0.1"
-            android:rating="0"
-            android:id="@+id/goodreads_rating"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
-            android:layout_below="@+id/goodreads_rating_title"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/helen_ratings"
-            android:textStyle="bold"
-            android:textColor="@color/colorDarkGrey"
-            android:id="@+id/helen_rating_title"
-            android:layout_below="@+id/goodreads_rating"
-            android:layout_alignLeft="@+id/helen_ratings"
-            android:layout_alignStart="@+id/helen_ratings"/>
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:stepSize="0.1"
-            android:rating="0"
-            android:id="@+id/helen_ratings"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
-            android:layout_below="@+id/helen_rating_title"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/user_ratings"
-            android:textStyle="bold"
-            android:textColor="@color/colorDarkGrey"
-            android:id="@+id/user_rating_title"
-            android:layout_below="@+id/helen_ratings"
-            android:layout_alignLeft="@+id/user_ratings"
-            android:layout_alignStart="@+id/user_ratings"/>
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:max="5"
-            android:stepSize="1"
-            android:rating="0"
-            android:id="@+id/user_ratings"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
-            android:layout_below="@+id/user_rating_title"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"/>
+            android:layout_below="@+id/object_desc" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/object_release_date"
+            android:id="@+id/view"
+            android:background="@color/colorPrimary2" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -179,13 +195,11 @@
             android:layout_height="wrap_content"
             android:text="@string/add_review"
             android:textColor="@color/colorDarkGrey"
-            android:id="@+id/add_review_button" />
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/add_review_button"
-            android:id="@+id/view"
-            android:background="@color/colorPrimary2" />
+            android:id="@+id/add_review_button"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
         <TextView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
@@ -193,9 +207,14 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/listview_title"
             android:textStyle="bold"
-            android:textColor="@color/colorDarkGrey"
-            android:id="@+id/review_title"
-            android:layout_below="@+id/view" />
+            android:textColor="@android:color/holo_blue_light"
+            android:id="@+id/review_title" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/add_review_button"
+            android:id="@+id/view2"
+            android:background="@color/colorPrimary2" />
 
     </RelativeLayout>
 </LinearLayout>

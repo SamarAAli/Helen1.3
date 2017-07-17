@@ -7,43 +7,29 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
-import java.util.Locale;
 
-public class ServerFragment extends Fragment implements
-        TextToSpeech.OnInitListener  {
+public class ServerFragment extends Fragment  {
     private FragmentListener flisttener;
     private AlertDialog alertDialog;
     private BookSearch searcher;
-    String BookTitle="";
-    private TextToSpeech textToSpeech;
-    HashMap<String, String> TTSmap = new HashMap<String, String>();
-    private boolean YesOrNo=false;
-    /////////////////////////////////////////////////////////
-    private Locale currentSpokenLang = Locale.US;
-
-
-    /////////////////////////////////////////////////////////
+    private boolean authorInfo = false;
     public ServerFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,37 +43,16 @@ public class ServerFragment extends Fragment implements
             search();
             }
         });
-        ImageButton mAsk=(ImageButton) root.findViewById(R.id.ask_helen_search);
+        Button mAsk=(Button)root.findViewById(R.id.ask_helen_search);
         mAsk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ExpectSpeechInput();
             }
         });
-        textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
-        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
-
-
 
         return root;
     }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        {
-            textToSpeech.speak(" Hi Tarek", TextToSpeech.QUEUE_FLUSH, TTSmap) ;
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
     public boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -110,6 +75,43 @@ public class ServerFragment extends Fragment implements
     public void search()
     {
         EditText search_Query=(EditText) getActivity().findViewById(R.id.input_text);
+        /*search_Query.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        yourEditText.setFocusable(true);
+                        yourEditText.requestFocus();
+                        yourEditText.setSelection(emailEditText.getText().length());
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.performClick();
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+
+            }
+        });*/
+                /*setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                final String[] choices = {"Book","Author"};
+                dialogBuilder.setTitle("Select Search Preference:");
+                dialogBuilder = dialogBuilder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        String selectedChoice = choices[i];
+                        if (selectedChoice == "Author")
+                            authorInfo = true;
+                    }
+                });
+                AlertDialog ChoicesDialog = dialogBuilder.create();
+                ChoicesDialog.show();
+            }
+        });*/
         RadioButton isSearch = (RadioButton) getActivity().findViewById(R.id.search_radio_btn);
         RadioButton isTitle = (RadioButton) getActivity().findViewById(R.id.title_radio_btn);
         if(search_Query != null)
@@ -120,33 +122,35 @@ public class ServerFragment extends Fragment implements
                 searcher = new BookSearch(getActivity());
                 JSONObject bookInfo = null;
                 try {
-                    if (isSearch.isChecked())
+                    if(authorInfo)
                     {
-                        if(isTitle.isChecked())
-                        {
-                            bookInfo = searcher.getBookByTitle(query);
-                            bookInfo.put("query_param",query);
-                        }
-                        else
-                        {
-                            bookInfo = searcher.getBookByAuthor(query);
-                            bookInfo.put("query_param",query);
-                        }
+
                     }
                     else
                     {
-                        if(isTitle.isChecked())
+                        if (isSearch.isChecked())
                         {
-                            bookInfo = searcher.getSimilarByTitle(query);
-                            bookInfo.put("query_param",query);
+                            if(isTitle.isChecked())
+                            {
+                                bookInfo = searcher.getBookByTitle(query);
+                            }
+                            else
+                            {
+                                bookInfo = searcher.getBookByAuthor(query);
+                            }
                         }
                         else
                         {
-                            bookInfo = searcher.getSimilarByAuthor(query);
-                            bookInfo.put("query_param",query);
+                            if(isTitle.isChecked())
+                            {
+                                bookInfo = searcher.getSimilarByTitle(query);
+                            }
+                            else
+                            {
+                                bookInfo = searcher.getSimilarByAuthor(query);
+                            }
                         }
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("Error:",e.toString());
@@ -163,40 +167,6 @@ public class ServerFragment extends Fragment implements
 
 
 ///////////////////////////////////////////////////////////////////////
-   /* public void YesorNo()
-    {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setTitle("Confirm");
-
-        // Set up the input
-        final EditText input = new EditText(getActivity());
-
-
-
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        // input.setHint(pdfView.getCurrentPage());
-        builder.setView(input);
-
-// Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        builder.show();
-    }*/
-
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -208,35 +178,14 @@ public class ServerFragment extends Fragment implements
 
              ArrayList<String> Result=new ArrayList<>();
              UnderstandUserTask task=new UnderstandUserTask();
-             textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
-               while(textToSpeech.isSpeaking())
-               {
-
-               }
-            /*    YesorNo();
-                if(YesOrNo==false)
-                    return;*/
-
              try {
                  Result= task.execute(spokenText.get(0)).get();
-                 if(Result.get(0).equals("WriteRating"))
-                 {
-                            BookTitle=Result.get(1);
-                            ExpectRate();
-                 }
-                 else if(Result.get(0).equals("WriteReview"))
-                 {
-                     BookTitle=Result.get(1);
-                    ExpectReview();
-                 }
-                else {
-                     Intent i = new Intent(getActivity(), TransitActivity.class);
-                     i.putExtra("query_class", Result.get(0));
+                 Intent i=new Intent(getActivity(),TransitActivity.class);
+                 i.putExtra("query_class",Result.get(0));
+                 i.putExtra("entity",Result.get(1));
+                 i.putExtra("type",Result.get(2));
+                 startActivity(i);
 
-                     i.putExtra("entity", Result.get(1));
-                     i.putExtra("type", Result.get(2));
-                     startActivity(i);
-                 }
 
              } catch (InterruptedException e) {
                  e.printStackTrace();
@@ -245,76 +194,7 @@ public class ServerFragment extends Fragment implements
              }
 
         }
-        else if((requestCode == 110) && (data != null))
-         {
-             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
-               Float Rating=Float.parseFloat(spokenText.get(0));
-             try {
-                 Interaction.createRating(Rating,BookTitle);
-             } catch (Exception e) {
-                 e.printStackTrace();
-             }
-         }
-            else if((requestCode == 120) && (data != null))
-         {
-             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
-             try {
-                 Interaction.createReview(spokenText.get(0),BookTitle);
-             } catch (Exception e) {
-                 e.printStackTrace();
-             }
-         }
-         else if((requestCode == 130) && (data != null))
-         {
-             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-    public void ExpectRate()
-    {
-        // Starts an Activity that will convert speech to text
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        // Use a language model based on free-form speech recognition
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-
-        // Recognize speech based on the default speech of device
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-
-        // Prompt the user to speak
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_input_Rate));
-        try{
-            startActivityForResult(intent, 110);
-        } catch (ActivityNotFoundException e){
-            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
-        }
-    }
-    public void ExpectReview()
-    {
-        // Starts an Activity that will convert speech to text
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-
-        // Use a language model based on free-form speech recognition
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-
-        // Recognize speech based on the default speech of device
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-
-        // Prompt the user to speak
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_input_Review));
-        try{
-             startActivityForResult(intent, 120);
-        } catch (ActivityNotFoundException e){
-            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
-        }
     }
     public void ExpectSpeechInput() {
 
@@ -338,10 +218,4 @@ public class ServerFragment extends Fragment implements
         }
     }
 
-
-    @Override
-    public void onInit(int i) {
-
-
-    }
 }

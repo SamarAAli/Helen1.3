@@ -1,9 +1,11 @@
 package com.example.tarek_ragaeey.helen11;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import java.io.File;
@@ -11,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static android.support.v4.app.ActivityCompat.requestPermissions;
 
 public class BookDownload {
     private ProgressDialog pDialog;
@@ -27,6 +31,20 @@ public class BookDownload {
         REFERER = referer;
         new DownloadFileFromURL().execute(downloadLink);
     }
+    private boolean shouldAskPermissions() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+    @TargetApi(23)
+    private void askPermissions() {
+        String[] permissions = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+        };
+        int requestCode = 200;
+        requestPermissions(activityContext,permissions, requestCode);
+
+    }
+
     private class DownloadFileFromURL extends AsyncTask<String, String, String>
     {
         /**
@@ -73,6 +91,8 @@ public class BookDownload {
                     //Creating a new directory for the file if it doesn't exist
                     File folder = new File(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_DOWNLOADS)+"/Helen/");
+                    if (shouldAskPermissions())
+                        askPermissions();
                     if(!folder.exists())
                     {
                         if(folder.mkdirs())
@@ -153,7 +173,9 @@ public class BookDownload {
             try{
                 Uri builtUri = Uri.parse(activityContext.getResources().getString(R.string.book_download)+BOOK_TITLE);
                 URL url = new URL(builtUri.toString());
+                String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
                 urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty ("Authorization", basicAuth);
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
             }catch (Exception e) {

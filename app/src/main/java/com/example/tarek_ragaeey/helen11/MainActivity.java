@@ -1,11 +1,13 @@
 package com.example.tarek_ragaeey.helen11;
 
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity   {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        askPermissions();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
           //  actionBar.setDisplayShowHomeEnabled(false);
@@ -48,6 +51,15 @@ public class MainActivity extends AppCompatActivity   {
 
     }
 
+    @TargetApi(23)
+    private void askPermissions() {
+        String[] permissions = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+        };
+        int requestCode = 200;
+        ActivityCompat.requestPermissions(MainActivity.this,permissions, requestCode);
+    }
    /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);

@@ -13,12 +13,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 
 public class CreateUserInteractions {
@@ -31,32 +46,14 @@ public class CreateUserInteractions {
     }
     public JSONObject createReview (String Review,String book_title) throws Exception
     {
-        StringBuilder link = new StringBuilder(activityContext.getResources().getString(R.string.create_review)+book_title);
-        link.append("&review=");
-        link.append(URLEncoder.encode(Review, "UTF-8"));
-        return new CreateInteractionTask().execute(link.toString()).get();
+        String link = activityContext.getResources().getString(R.string.create_review);
+        JSONObject reviewData = new CreateInteractionTask().execute(link,book_title,"review",Review).get();
+        return reviewData;
     }
     public void createRating (float Rating,String book_title) throws Exception
     {
-        StringBuilder link = new StringBuilder(activityContext.getResources().getString(R.string.create_rating)+book_title);
-        link.append("&rate=");
-        link.append(URLEncoder.encode(Float.toString(Rating), "UTF-8"));
-        new CreateInteractionTask().execute(link.toString());
-    }
-
-    private void showDialogMsg(String msg) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activityContext);
-        alertDialogBuilder.setMessage(msg);
-
-        alertDialogBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+        String link = activityContext.getResources().getString(R.string.create_rating);
+        new CreateInteractionTask().execute(link,book_title,"rate",Float.toString(Rating));
     }
     private class CreateInteractionTask extends AsyncTask<String, Void, JSONObject>
     {
@@ -67,60 +64,30 @@ public class CreateUserInteractions {
         @Override
         protected JSONObject doInBackground(String... params)
         {
-            String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            String reviewJsonstring = null;
+            String basicAuth="JWT " + activityContext.getResources().getString(R.string.token);
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(params[0]);
+            httppost.addHeader("Authorization", basicAuth);
             try {
-                Uri builtUri = Uri.parse(params[0]);
-                URL url = new URL(builtUri.toString());
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(10000);
-                urlConnection.setConnectTimeout(15000);
-                urlConnection.setRequestProperty ("Authorization", basicAuth);
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
+                //add data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                nameValuePairs.add(new BasicNameValuePair("book_title",params[1]));
+                nameValuePairs.add(new BasicNameValuePair(params[2],params[3]));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                //execute http post
+                HttpResponse response = httpclient.execute(httppost);
+                String reviewJsonstring = EntityUtils.toString(response.getEntity());
+                try{
+                    return getReviewDataFromJson(reviewJsonstring);
+                } catch (JSONException e)
+                {
+                    Log.e("Error:",e.getMessage(),e);
+                    e.printStackTrace();
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                reviewJsonstring = buffer.toString();
-            }catch (IOException e) {
-                Log.e("Error:", "Could not connect ", e);
-                showDialogMsg("Please check your internet connection!");
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("Error:", "Error closing stream", e);
-                    }
-                }
-            }
-            try{
-                return getReviewDataFromJson(reviewJsonstring);
-            } catch (JSONException e)
-            {
+            } catch (ClientProtocolException e) {
+                Log.e("Error:",e.getMessage(),e);
+                e.printStackTrace();
+            } catch (IOException e) {
                 Log.e("Error:",e.getMessage(),e);
                 e.printStackTrace();
             }
