@@ -43,26 +43,20 @@ public class TransitActivity extends AppCompatActivity {
             case "ReadBook":
                 readBook(Entity);
                 break;
-            case "Summary":
-                break;
-
-            case "WriteReview":
-                RateReview(Entity,"writeReview");
 
             case "GetReview":
                 RateReview(Entity,"getReview");
                 break;
-            case "WriteRating":
-                RateReview(Entity,"writeRating");
-                break;
             case "GetRating":
                 RateReview(Entity,"getRating");
-
+                    break;
             case"AuthorName":
                 break;
 
 
             default:
+                Intent wrong=new Intent(this,MainActivity.class);
+                startActivity(wrong);
                 break;
         }
     }

@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_weight="0.15"
         android:layout_height="50dp"
-        android:text="@string/voiceButton"
+        android:text="Play/Pause"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorWhite"
         android:layout_marginBottom="8dp"

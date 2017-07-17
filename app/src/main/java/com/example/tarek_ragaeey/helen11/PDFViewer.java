@@ -61,6 +61,7 @@ public class PDFViewer extends AppCompatActivity implements
     private ArrayList<Integer> Start=new ArrayList<>();
     private ArrayList<Integer> End=new ArrayList<>();
     private Integer StartEndIT=0;
+    private int currentPage=0;
     private Integer StartEndDiff=0;
 /////////////////////////////////////////////////////////////////////////////////////
 
