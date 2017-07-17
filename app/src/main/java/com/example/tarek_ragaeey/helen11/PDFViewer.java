@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -69,12 +70,7 @@ public class PDFViewer extends AppCompatActivity implements
         ExtractDataFromuri(i.getStringExtra("uri"));
 
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(FileName);
-            //  actionBar.setDisplayShowHomeEnabled(false);
-        }
-        play_pause_item = (MenuItem) findViewById(R.id.play_pause);
+          play_pause_item = (MenuItem) findViewById(R.id.play_pause);
 
         setContentView(R.layout.activity_pdfviewer);
         ////////////////////////////////////////////////////////////
@@ -102,6 +98,17 @@ public class PDFViewer extends AppCompatActivity implements
                 if (!textToSpeech.isSpeaking())
                     alertChangePage();
 
+            }
+        });
+        Button bt=(Button)findViewById(R.id.ask_helen_pdfRead);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    play_pause();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
         pdfView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -157,7 +164,11 @@ public class PDFViewer extends AppCompatActivity implements
                 Intent i = new Intent(PDFViewer.this, SettingsActivity.class);
                 startActivity(i);
             case R.id.play_pause:
-                play_pause();
+                try {
+                    play_pause();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
 
             default:
@@ -319,15 +330,7 @@ public class PDFViewer extends AppCompatActivity implements
                     End.clear();
                     StartEndIT=0;
                 }
-           /* }
-            else
-            {
-               Completed=true;
-                Start.clear();
-                End.clear();
-                StartEndIT=0;
-            }
-*/
+
     }
 
     private void playSound(String words) {
@@ -335,21 +338,35 @@ public class PDFViewer extends AppCompatActivity implements
         textToSpeech.speak(words, TextToSpeech.QUEUE_FLUSH, TTSmap);
     }
 
-    private void play_pause() {
-        if (textToSpeech.isSpeaking()) {
-            textToSpeech.stop();
+    private void play_pause() throws RemoteException
+    {
+        runOnUiThread(new Runnable()
+        {
 
-           StartEndIT--;
-           pause = true;
-           // Completed = false;
-        } else {
-            try {
-                ChangePage(pdfView.getCurrentPage());
-                pause = false;
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+                          @Override
+                          public void run()
+                              {
+                                  if (textToSpeech.isSpeaking())
+                                  {
+                                      textToSpeech.stop();
+
+                                      StartEndIT--;
+                                      pause = true;
+                                      // Completed = false;
+                                  } else
+                                  {
+                                      try
+                                      {
+                                          ChangePage(pdfView.getCurrentPage());
+                                          pause = false;
+                                      } catch (RemoteException e)
+                                      {
+                                          e.printStackTrace();
+                                      }
+                                  }
+                              }
+        });
+
     }
 
 
@@ -364,7 +381,11 @@ public class PDFViewer extends AppCompatActivity implements
         final EditText input = new EditText(this);
 
         if (textToSpeech.isSpeaking()) {
-            play_pause();
+            try {
+                play_pause();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             // play_pause_item.setIcon(R.drawable.play_action);
 
            // Completed = false;

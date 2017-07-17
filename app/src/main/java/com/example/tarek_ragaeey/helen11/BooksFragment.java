@@ -23,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -67,7 +69,7 @@ public class BooksFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View rootView = inflater.inflate(R.layout.fragment_books, container, false);
-        Button askHelen=(Button) rootView.findViewById(R.id.ask_helen_home);
+        ImageButton askHelen=(ImageButton) rootView.findViewById(R.id.ask_helen_home);
         askHelen.setOnClickListener(
                 new View.OnClickListener() {
             @Override
@@ -102,8 +104,7 @@ public class BooksFragment extends Fragment {
         else
         {
             BookList=new HashSet<String>();
-          //  BooksNames.add("You Haven't opened any book yet");
-        }
+           }
 
 
         mBooksAdapter =

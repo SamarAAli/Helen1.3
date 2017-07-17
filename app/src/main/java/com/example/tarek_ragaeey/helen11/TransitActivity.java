@@ -46,13 +46,13 @@ public class TransitActivity extends AppCompatActivity {
             case "Summary":
                 break;
 
-            case "WriteReview ":
+            case "WriteReview":
                 RateReview(Entity,"writeReview");
 
-            case "GetReview ":
+            case "GetReview":
                 RateReview(Entity,"getReview");
                 break;
-            case "WriteRating ":
+            case "WriteRating":
                 RateReview(Entity,"writeRating");
                 break;
             case "GetRating":
@@ -74,12 +74,15 @@ public class TransitActivity extends AppCompatActivity {
         File directory = new File(path);
         File[] files = directory.listFiles();
         Log.d("Files", "Size: "+ files.length);
+        String filePath="";
         for (int i = 0; i < files.length; i++)
         {
             String Filename=files[i].getName().replaceAll(".pdf","");
+
             if(Filename.equals(entity))
             {
-                //jump to pdfReader
+                filePath=files[i].getAbsolutePath();
+                Log.d("file_path",filePath);
             }
         }
     }

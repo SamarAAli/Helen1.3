@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -16,18 +18,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.Locale;
 
-public class ServerFragment extends Fragment  {
+public class ServerFragment extends Fragment implements
+        TextToSpeech.OnInitListener  {
     private FragmentListener flisttener;
     private AlertDialog alertDialog;
     private BookSearch searcher;
+    String BookTitle="";
+    private TextToSpeech textToSpeech;
+    HashMap<String, String> TTSmap = new HashMap<String, String>();
+
+    /////////////////////////////////////////////////////////
+    private Locale currentSpokenLang = Locale.US;
+
+
+    /////////////////////////////////////////////////////////
     public ServerFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,16 +56,27 @@ public class ServerFragment extends Fragment  {
             search();
             }
         });
-        Button mAsk=(Button)root.findViewById(R.id.ask_helen_search);
+        ImageButton mAsk=(ImageButton) root.findViewById(R.id.ask_helen_search);
         mAsk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ExpectSpeechInput();
             }
         });
+        textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
+        TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
+
+
 
         return root;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
     public boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -137,14 +163,32 @@ public class ServerFragment extends Fragment  {
 
              ArrayList<String> Result=new ArrayList<>();
              UnderstandUserTask task=new UnderstandUserTask();
+             textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+               while(textToSpeech.isSpeaking())
+               {
+
+               }
+
              try {
                  Result= task.execute(spokenText.get(0)).get();
-                 Intent i=new Intent(getActivity(),TransitActivity.class);
-                 i.putExtra("query_class",Result.get(0));
-                 i.putExtra("entity",Result.get(1));
-                 i.putExtra("type",Result.get(2));
-                 startActivity(i);
+                 if(Result.get(0).equals("WriteRating"))
+                 {
+                            BookTitle=Result.get(1);
+                            ExpectRate();
+                 }
+                 else if(Result.get(0).equals("WriteReview"))
+                 {
+                     BookTitle=Result.get(1);
+                    ExpectReview();
+                 }
+                else {
+                     Intent i = new Intent(getActivity(), TransitActivity.class);
+                     i.putExtra("query_class", Result.get(0));
 
+                     i.putExtra("entity", Result.get(1));
+                     i.putExtra("type", Result.get(2));
+                     startActivity(i);
+                 }
 
              } catch (InterruptedException e) {
                  e.printStackTrace();
@@ -153,7 +197,72 @@ public class ServerFragment extends Fragment  {
              }
 
         }
+        else if((requestCode == 110) && (data != null))
+         {
+             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+               Float Rating=Float.parseFloat(spokenText.get(0));
+             try {
+                 Interaction.createRating(Rating,BookTitle);
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+         }
+            else if((requestCode == 120) && (data != null))
+         {
+             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
+             try {
+                 Interaction.createReview(spokenText.get(0),BookTitle);
+             } catch (Exception e) {
+                 e.printStackTrace();
+             }
+         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    public void ExpectRate()
+    {
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Rate));
+        try{
+            startActivityForResult(intent, 110);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
+    }
+    public void ExpectReview()
+    {
+        // Starts an Activity that will convert speech to text
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        // Use a language model based on free-form speech recognition
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+
+        // Recognize speech based on the default speech of device
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+        // Prompt the user to speak
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_input_Review));
+        try{
+             startActivityForResult(intent, 120);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
+        }
     }
     public void ExpectSpeechInput() {
 
@@ -177,4 +286,10 @@ public class ServerFragment extends Fragment  {
         }
     }
 
+
+    @Override
+    public void onInit(int i) {
+
+
+    }
 }

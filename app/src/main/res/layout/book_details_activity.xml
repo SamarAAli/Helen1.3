@@ -8,6 +8,7 @@
     android:background="@color/background"
     tools:context="com.example.tarek_ragaeey.helen11.BookDetailsActivity">
 
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

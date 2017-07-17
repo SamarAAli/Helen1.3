@@ -53,6 +53,7 @@ import java.util.List;
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         listView.addHeaderView(headerview);
         listView.setAdapter(detailsAdapter);
         return rootview;
@@ -66,7 +67,7 @@ import java.util.List;
         String GOODREADS_RATING = bookObj.getString("goodreads_rating");
         String HELEN_RATING = bookObj.getString("helen_rating");
         //String HELEN_RATING = bookObj.getString("user_ratings");
-        USER_RATING = bookObj.getString("user_ratings");
+     //   USER_RATING = bookObj.getString("user_ratings");
         //USER_RATING = null;
         Referer = bookObj.getString("referer");
         downloadLink = bookObj.getString("download_link");

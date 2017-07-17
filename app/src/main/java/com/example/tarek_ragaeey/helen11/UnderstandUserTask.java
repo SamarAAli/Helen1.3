@@ -27,7 +27,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
     @Override
     protected ArrayList<String> doInBackground(String... strings) {
 
-        String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJhbWFkYW4iLCJvcmlnX2lhdCI6MTQ5OTk3NDg2MCwidXNlcl9pZCI6MSwiZW1haWwiOiJyYW1hZGFuYWhtZWRyYW1hZGFuOTNAeWFob28uY29tIiwiZXhwIjoxNTAwMDYxMjYwfQ.K2d39TfAaz_SxODYO00NkTCbSZ8oMTmguNB36B4AHM8";
+        String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
         URL url;
     /*    String JWTauth="JWT "+token;
     */    HttpURLConnection urlConnection = null;
@@ -55,6 +55,7 @@ public class UnderstandUserTask extends AsyncTask <String, Void, ArrayList<Strin
                 data = reader.read();
 
             }
+
             JSONArray arr=new JSONArray(result);
             JSONObject root = arr.getJSONObject(0);
             queryClass=root.getString("intent");
