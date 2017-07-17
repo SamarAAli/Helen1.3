@@ -13,15 +13,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
         <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+
             android:name=".PDFViewer"
             android:label="@string/title_activity_pdfviewer"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Splash"
             android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,6 +38,7 @@
         <activity android:name="com.example.tarek_ragaeey.helen11.SignupActivity" android:theme="@style/AppTheme" />
         <activity android:name=".BookListActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -40,6 +46,7 @@
         </activity>
         <activity android:name=".BookDetailsActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -47,6 +54,7 @@
         </activity>
         <activity android:name=".TransitActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>

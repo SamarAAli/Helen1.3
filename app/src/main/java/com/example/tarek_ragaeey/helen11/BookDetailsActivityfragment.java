@@ -9,6 +9,7 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.EventLogTags;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,7 +42,7 @@ public class BookDetailsActivityfragment extends Fragment implements
     private BookDownload downloader;
     private RatingBar user_rating;
     private View headerview;
-
+    private String DESCRIPTION;
     private Button downloadButton;
     //////////////////////////////////////////////////////////////////// Tarek
     private TextToSpeech textToSpeech;
@@ -94,7 +95,7 @@ public class BookDetailsActivityfragment extends Fragment implements
         String AUTHOR = bookObj.getString("author");
         String IMAGEURL = bookObj.getString("image");
         String REL_DATE = bookObj.getString("published_date");
-        String DESCRIPTION = bookObj.getString("description");
+         DESCRIPTION = bookObj.getString("description");
         String GOODREADS_RATING = bookObj.getString("goodreads_rating");
         String HELEN_RATING = bookObj.getString("helen_rating");
         USER_RATING = bookObj.getString("user_rating");
@@ -222,6 +223,15 @@ public class BookDetailsActivityfragment extends Fragment implements
         });
     }
     ///////////////////////////////////////////////////////////////////////////////////Tarek
+    public void stopVoice()
+    {
+        if(textToSpeech.isSpeaking())
+        {
+            textToSpeech.stop();
+        }
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -262,7 +272,7 @@ public class BookDetailsActivityfragment extends Fragment implements
                 }
                 else if(Result.get(0).equals("Summary"))
                 {
-
+                    textToSpeech.speak(DESCRIPTION, TextToSpeech.QUEUE_FLUSH, TTSmap);
                 }
                 else {
                     Intent i = new Intent(getActivity(), TransitActivity.class);
@@ -281,14 +291,31 @@ public class BookDetailsActivityfragment extends Fragment implements
 
         }
         else if((requestCode == 110) && (data != null))
-        {
-            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+        {ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
-            Float Rating=Float.parseFloat(spokenText.get(0));
+            float Rating= (float) 1.1;
             try {
+                Rating=Float.parseFloat(spokenText.get(0));
+            } catch (NumberFormatException e) {
+                textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                while(textToSpeech.isSpeaking())
+                {
+
+                }
+                ExpectRate();
+                return;
+
+
+            }   try {
                 Interaction.createRating(Rating,BookTitleRateReview);
-            } catch (Exception e) {
+            textToSpeech.speak("Adding your rate is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+            while(textToSpeech.isSpeaking())
+            {
+
+            }
+
+        } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -299,6 +326,12 @@ public class BookDetailsActivityfragment extends Fragment implements
             CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
             try {
                 Interaction.createReview(spokenText.get(0),BookTitleRateReview);
+                textToSpeech.speak("Adding your review is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+                while(textToSpeech.isSpeaking())
+                {
+
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -307,6 +340,7 @@ public class BookDetailsActivityfragment extends Fragment implements
     }
     public void ExpectRate()
     {
+
         textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
         while(textToSpeech.isSpeaking())
         {
@@ -334,7 +368,7 @@ public class BookDetailsActivityfragment extends Fragment implements
 
     public void ExpectSpeechInput() {
 
-
+            stopVoice();
 
         // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

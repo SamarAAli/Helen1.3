@@ -199,13 +199,39 @@ public class ServerFragment extends Fragment implements
 
                  if(Result.get(0).equals("WriteRating"))
                  {
-                            BookTitle=Result.get(1);
-                            ExpectRate();
+                            if(!Result.get(1).equals(""))
+
+                            {
+                                BookTitle = Result.get(1);
+                                ExpectRate();
+                            }
+                            else
+                                {
+                                    textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                                    while(textToSpeech.isSpeaking())
+                                    {
+
+                                    }
+
+                                }
                  }
                  else if(Result.get(0).equals("WriteReview"))
                  {
-                     BookTitle=Result.get(1);
-                    ExpectReview();
+                     if(!Result.get(1).equals(""))
+
+                     {
+                         BookTitle = Result.get(1);
+                         ExpectReview();
+                     }
+                     else
+                     {
+                         textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                         while(textToSpeech.isSpeaking())
+                         {
+
+                         }
+
+                     }
                  }
                 else {
                      Intent i = new Intent(getActivity(), TransitActivity.class);
@@ -228,9 +254,30 @@ public class ServerFragment extends Fragment implements
              ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
              CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
-               Float Rating=Float.parseFloat(spokenText.get(0));
+             float Rating= (float) 1.1;
+             try {
+                 Rating=Float.parseFloat(spokenText.get(0));
+             } catch (NumberFormatException e) {
+                 textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                 while(textToSpeech.isSpeaking())
+                 {
+
+                 }
+                 ExpectRate();
+                 return;
+
+
+             }
+
+
              try {
                  Interaction.createRating(Rating,BookTitle);
+                 textToSpeech.speak("Adding your rate is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+                 while(textToSpeech.isSpeaking())
+                 {
+
+                 }
+
              } catch (Exception e) {
                  e.printStackTrace();
              }
@@ -242,6 +289,12 @@ public class ServerFragment extends Fragment implements
              CreateUserInteractions Interaction=new CreateUserInteractions(getActivity());
              try {
                  Interaction.createReview(spokenText.get(0),BookTitle);
+                 textToSpeech.speak("Adding your review is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
+                 while(textToSpeech.isSpeaking())
+                 {
+
+                 }
+
              } catch (Exception e) {
                  e.printStackTrace();
              }
