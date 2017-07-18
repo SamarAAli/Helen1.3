@@ -39,7 +39,7 @@ public class BookListActivityFragment extends Fragment implements
     //////////////////////////////////////////
     private BookListAdapter BooksAdapter;
     private FragmentListener flistener;
-
+    private BookSearch searcher;
     private List<JSONObject> BookList ;
     private JSONObject BookFullData;
     private AlertDialog alertDialog;
@@ -168,24 +168,101 @@ public class BookListActivityFragment extends Fragment implements
                 Result= task.execute(spokenText.get(0)).get();
                 if(Result.get(0).equals("")||Result.get(1).equals("")||Result.get(2).equals(""))
                 {
-                    textToSpeech.speak("I don't understand enter command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
                     while(textToSpeech.isSpeaking())
                     {
 
                     }
-
                     return;
                 }
 
                 if(Result.get(0).equals("WriteRating"))
                 {
-                    BookTitle=Result.get(1);
-                    ExpectRate();
+                    if(!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        ExpectRate();
+                    }
+                    else
+                    {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while(textToSpeech.isSpeaking())
+                        {
+
+                        }
+
+                    }
                 }
                 else if(Result.get(0).equals("WriteReview"))
                 {
-                    BookTitle=Result.get(1);
-                    ExpectReview();
+                    if(!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        ExpectReview();
+                    }
+                    else
+                    {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while(textToSpeech.isSpeaking())
+                        {
+
+                        }
+
+                    }
+                }
+                else if(Result.get(0).equals("GetReview")) {
+                    if (!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        searcher = new BookSearch(getActivity());
+                        JSONObject bookInfo = null;
+                        try {
+                            bookInfo = searcher.getComments(BookTitle);
+                            ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
+                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while (textToSpeech.isSpeaking()) {
+
+                        }
+
+                    }
+                }
+                else if(Result.get(0).equals("GetRating"))
+                {if(!Result.get(1).equals(""))
+
+                {
+                    BookTitle = Result.get(1);
+                    searcher = new BookSearch(getActivity());
+                    JSONObject bookInfo = null;
+                    try {
+                        bookInfo=searcher.getRatings(BookTitle);
+                        String Rating=getRatingFromJson(bookInfo.toString());
+                        textToSpeech.speak(BookTitle+" Rating is "+ Rating, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else
+                {
+                    textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+
+                }
+
                 }
                 else {
                     Intent i = new Intent(getActivity(), TransitActivity.class);
@@ -221,7 +298,10 @@ public class BookListActivityFragment extends Fragment implements
                 return;
 
 
-            }    try {
+            }
+
+
+            try {
                 Interaction.createRating(Rating,BookTitle);
                 textToSpeech.speak("Adding your rate is being processed", TextToSpeech.QUEUE_FLUSH,TTSmap);
                 while(textToSpeech.isSpeaking())
@@ -245,12 +325,36 @@ public class BookListActivityFragment extends Fragment implements
                 {
 
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private String getRatingFromJson(String ratingString) throws JSONException{
+
+        JSONObject rateObj = new JSONObject(ratingString);
+        JSONArray  reviewsArr = rateObj.getJSONArray("booksinfo");
+        JSONObject rate = reviewsArr.getJSONObject(0);
+        String s=rate.getString("goodreads_rating");
+
+        return s;
+    }
+
+    private ArrayList<String> getReviewFromJson(String reviewString) throws JSONException{
+        JSONObject reviewsObj = new JSONObject(reviewString);
+        JSONArray  reviewsArr = reviewsObj.getJSONArray("booksinfo");
+        ArrayList<String> reviews=new ArrayList<>();
+        for(int i = 0; i < reviewsArr.length(); i++)
+        {
+            JSONObject review = reviewsArr.getJSONObject(i);
+            reviews.add(review.getString("review"));
+        }
+        return reviews;
+    }
+
     public void ExpectRate()
     {
 
@@ -258,8 +362,7 @@ public class BookListActivityFragment extends Fragment implements
         while(textToSpeech.isSpeaking())
         {
 
-        }
-        // Starts an Activity that will convert speech to text
+        }        // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
         // Use a language model based on free-form speech recognition
@@ -281,7 +384,7 @@ public class BookListActivityFragment extends Fragment implements
     public void ExpectReview()
     {
 
-        textToSpeech.speak("Say your review", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
         while(textToSpeech.isSpeaking())
         {
 
@@ -326,7 +429,10 @@ public class BookListActivityFragment extends Fragment implements
             Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
         }
     }
+      /*public float  getRatingFromJson(String json)
+        {
 
+        }*/
 
     @Override
     public void onInit(int i) {

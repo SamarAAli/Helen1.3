@@ -22,6 +22,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -242,6 +245,58 @@ public class ServerFragment extends Fragment implements
 
                     }
                 }
+                else if(Result.get(0).equals("GetReview")) {
+                    if (!Result.get(1).equals(""))
+
+                    {
+                        BookTitle = Result.get(1);
+                        searcher = new BookSearch(getActivity());
+                        JSONObject bookInfo = null;
+                        try {
+                            bookInfo = searcher.getComments(BookTitle);
+                            ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
+                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while (textToSpeech.isSpeaking()) {
+
+                        }
+
+                    }
+                }
+                 else if(Result.get(0).equals("GetRating"))
+                {if(!Result.get(1).equals(""))
+
+                {
+                    BookTitle = Result.get(1);
+                    searcher = new BookSearch(getActivity());
+                    JSONObject bookInfo = null;
+                    try {
+                        bookInfo=searcher.getRatings(BookTitle);
+                        String Rating=getRatingFromJson(bookInfo.toString());
+                        textToSpeech.speak(BookTitle+" Rating is "+ Rating, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else
+                {
+                    textToSpeech.speak("I don't understand enter your command again", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+
+                }
+
+                }
                 else {
                     Intent i = new Intent(getActivity(), TransitActivity.class);
                     i.putExtra("query_class", Result.get(0));
@@ -310,6 +365,29 @@ public class ServerFragment extends Fragment implements
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private String getRatingFromJson(String ratingString) throws JSONException{
+
+        JSONObject rateObj = new JSONObject(ratingString);
+        JSONArray  reviewsArr = rateObj.getJSONArray("booksinfo");
+        JSONObject rate = reviewsArr.getJSONObject(0);
+            String s=rate.getString("goodreads_rating");
+
+        return s;
+    }
+
+    private ArrayList<String> getReviewFromJson(String reviewString) throws JSONException{
+            JSONObject reviewsObj = new JSONObject(reviewString);
+            JSONArray  reviewsArr = reviewsObj.getJSONArray("booksinfo");
+            ArrayList<String> reviews=new ArrayList<>();
+            for(int i = 0; i < reviewsArr.length(); i++)
+            {
+                JSONObject review = reviewsArr.getJSONObject(i);
+                reviews.add(review.getString("review"));
+            }
+            return reviews;
+    }
+
     public void ExpectRate()
     {
 
@@ -384,7 +462,10 @@ public class ServerFragment extends Fragment implements
             Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
         }
     }
+      /*public float  getRatingFromJson(String json)
+        {
 
+        }*/
 
     @Override
     public void onInit(int i) {

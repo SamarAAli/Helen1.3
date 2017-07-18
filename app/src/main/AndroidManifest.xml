@@ -44,6 +44,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.tarek_ragaeey.helen11.MainActivity"/>
         </activity>
+        
         <activity android:name=".BookDetailsActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -51,6 +52,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.tarek_ragaeey.helen11.BookListActivity"/>
+        </activity>
+        <activity android:name=".AuthorDetailsActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.tarek_ragaeey.helen11.MainActivity"/>
         </activity>
         <activity android:name=".TransitActivity"
             android:label="@string/app_name"

@@ -43,7 +43,9 @@ public class BookDetailsActivityfragment extends Fragment implements
     private RatingBar user_rating;
     private View headerview;
     private String DESCRIPTION;
+    private BookSearch searcher;
     private Button downloadButton;
+    String GOODREADS_RATING;
     //////////////////////////////////////////////////////////////////// Tarek
     private TextToSpeech textToSpeech;
     HashMap<String, String> TTSmap = new HashMap<String, String>();
@@ -96,7 +98,7 @@ public class BookDetailsActivityfragment extends Fragment implements
         String IMAGEURL = bookObj.getString("image");
         String REL_DATE = bookObj.getString("published_date");
          DESCRIPTION = bookObj.getString("description");
-        String GOODREADS_RATING = bookObj.getString("goodreads_rating");
+         GOODREADS_RATING = bookObj.getString("goodreads_rating");
         String HELEN_RATING = bookObj.getString("helen_rating");
         USER_RATING = bookObj.getString("user_rating");
         Referer = bookObj.getString("referer");
@@ -270,9 +272,60 @@ public class BookDetailsActivityfragment extends Fragment implements
                         BookTitleRateReview=BOOK_TITLE;
                     ExpectReview();
                 }
+
                 else if(Result.get(0).equals("Summary"))
                 {
                     textToSpeech.speak(DESCRIPTION, TextToSpeech.QUEUE_FLUSH, TTSmap);
+                }
+                else if(Result.get(0).equals("GetReview")) {
+                    if (!Result.get(1).equals(""))
+
+                    {
+                        BookTitleRateReview = Result.get(1);
+                        searcher = new BookSearch(getActivity());
+                        JSONObject bookInfo = null;
+                        try {
+                            bookInfo = searcher.getComments(BookTitleRateReview);
+                            ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
+                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        textToSpeech.speak("", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                        while (textToSpeech.isSpeaking()) {
+
+                        }
+
+                    }
+                }
+                else if(Result.get(0).equals("GetRating"))
+                {if(!Result.get(1).equals(""))
+
+                {
+                    BookTitleRateReview = Result.get(1);
+                    searcher = new BookSearch(getActivity());
+                    JSONObject bookInfo = null;
+                    try {
+                        bookInfo=searcher.getRatings(BookTitleRateReview);
+                        String Rating=getRatingFromJson(bookInfo.toString());
+                        textToSpeech.speak(BookTitleRateReview+" Rating is "+ Rating, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else
+                {
+                    textToSpeech.speak(BOOK_TITLE+ " Rating is "+ GOODREADS_RATING, TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while (textToSpeech.isSpeaking()) {
+
+                    }
+                }
+
                 }
                 else {
                     Intent i = new Intent(getActivity(), TransitActivity.class);
@@ -416,6 +469,27 @@ public class BookDetailsActivityfragment extends Fragment implements
         } catch (ActivityNotFoundException e){
             Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
         }
+    }
+    private String getRatingFromJson(String ratingString) throws JSONException{
+
+        JSONObject rateObj = new JSONObject(ratingString);
+        JSONArray  reviewsArr = rateObj.getJSONArray("booksinfo");
+        JSONObject rate = reviewsArr.getJSONObject(0);
+        String s=rate.getString("goodreads_rating");
+
+        return s;
+    }
+
+    private ArrayList<String> getReviewFromJson(String reviewString) throws JSONException{
+        JSONObject reviewsObj = new JSONObject(reviewString);
+        JSONArray  reviewsArr = reviewsObj.getJSONArray("booksinfo");
+        ArrayList<String> reviews=new ArrayList<>();
+        for(int i = 0; i < reviewsArr.length(); i++)
+        {
+            JSONObject review = reviewsArr.getJSONObject(i);
+            reviews.add(review.getString("review"));
+        }
+        return reviews;
     }
 
 

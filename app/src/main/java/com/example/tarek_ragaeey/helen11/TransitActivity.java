@@ -51,6 +51,7 @@ public class TransitActivity extends AppCompatActivity {
                 RateReview(Entity,"getRating");
                     break;
             case"AuthorName":
+                ShowAuthorDetails(Entity,Type);
                 break;
 
 
@@ -60,6 +61,7 @@ public class TransitActivity extends AppCompatActivity {
                 break;
         }
     }
+
 
     private void readBook(String entity) {
 
@@ -71,14 +73,22 @@ public class TransitActivity extends AppCompatActivity {
         String filePath="";
         for (int i = 0; i < files.length; i++)
         {
-            String Filename=files[i].getName().replaceAll(".pdf","");
+            String Filename=files[i].getName();
 
-            if(Filename.equals(entity))
+            if(Filename.toLowerCase().contains(entity.toLowerCase()))
             {
                 filePath=files[i].getAbsolutePath();
+                Intent read=new Intent(TransitActivity.this,MainActivity.class);
+                read.putExtra("path",filePath);
+                startActivity(read);
                 Log.d("file_path",filePath);
+
+                break;
+
             }
         }
+        Intent intent=new Intent(TransitActivity.this,MainActivity.class);
+        startActivity(intent);
     }
 
     public boolean isOnline(Context context) {
@@ -104,6 +114,43 @@ public class TransitActivity extends AppCompatActivity {
             }
         });
     }
+    private void ShowAuthorDetails(String Entity,String Type) {
+        Boolean isTitle;
+        if(Type.equals("BOOK"))
+        {
+            isTitle=true;
+        }
+        else
+        {
+            isTitle=false;
+        }
+        if(isOnline(context)) {
+            searcher = new BookSearch(this);
+            JSONObject bookInfo = null;
+            try {
+                if (isTitle)
+                {
+                    bookInfo=searcher.getAuthorInfoByTitle(Entity);
+
+                }
+                else if(!isTitle)
+                {
+                    bookInfo=searcher.getAuthorByName(Entity);
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("Error:",e.toString());
+            }
+            Intent intent = new Intent(this, AuthorDetailsActivity.class).putExtra("JSONObject", bookInfo.toString());
+            startActivity(intent);
+        }else
+            showDialogMsg("Please check your internet connection!");
+
+
+    }
+
     public void search(Boolean Search,String Entity,String Type,String Action )
     {
       Boolean isSearch=Search;

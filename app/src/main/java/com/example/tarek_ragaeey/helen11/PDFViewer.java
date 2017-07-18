@@ -71,9 +71,9 @@ public class PDFViewer extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         Intent i = this.getIntent();
 
-        ExtractDataFromuri(i.getStringExtra("uri"));
+        //ExtractDataFromuri(i.getStringExtra("uri"));
 
-
+        FilePath=i.getStringExtra("path");
           play_pause_item = (MenuItem) findViewById(R.id.play_pause);
 
         setContentView(R.layout.activity_pdfviewer);
@@ -143,7 +143,8 @@ public class PDFViewer extends AppCompatActivity implements
 
 
         textToSpeech = new TextToSpeech(this, (TextToSpeech.OnInitListener) this);
-
+       myUri =Uri.fromFile(new File(FilePath));
+       // pdfView.fromSource(FilePath).onPageChange(onPageChangeListener).load();
         pdfView.fromUri(myUri).onPageChange(onPageChangeListener).load();
 
     }

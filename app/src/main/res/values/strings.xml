@@ -40,8 +40,8 @@
     <string name="book_download">https://helen-final-gp.herokuapp.com/book/book_download/?book_title=</string>
     <string name="create_review">https://helen-final-gp.herokuapp.com/book/comments/create/</string>
     <string name="create_rating">https://helen-final-gp.herokuapp.com/book/ratings/create/</string>
-    <string name="search_author_by_name">https://http://helen-final-gp.herokuapp.com/book/author_info/?author=</string>
-    <string name="search_author_by_title">https://http://helen-final-gp.herokuapp.com/book/author_info/?book_title=</string>
+    <string name="search_author_by_name">https://helen-final-gp.herokuapp.com/book/author_info/?author=</string>
+    <string name="search_author_by_title">https://helen-final-gp.herokuapp.com/book/author_info/?book_title=</string>
     <string name="get_user_comments">https://helen-final-gp.herokuapp.com/book/comments_list/?book_title=</string>
     <string name="get_user_ratings">https://helen-final-gp.herokuapp.com/book/ratings_list/?book_title=</string>
     <string name="ask_helen">https://helen-final-gp.herokuapp.com/question/?question=</string>
