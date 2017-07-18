@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+    <TextView
+        android:id="@+id/search_for_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:text="Are you searching for a book or an author?"/>
+    <Switch
+        android:id="@+id/search_for_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="Searching for Book"/>
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/author_workCount"
+        android:background="@color/colorPrimary2" />
+    <TextView
+        android:id="@+id/search_type_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:text="Do you want to find this book or similar books to it?"/>
+    <Switch
+        android:id="@+id/search_type_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="Find Book"/>
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/author_workCount"
+        android:background="@color/colorPrimary2" />
+    <TextView
+        android:id="@+id/search_by_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorWhite"
+        android:text="Have you entered a book title or an author name?"/>
+    <Switch
+        android:id="@+id/search_by_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="Book Title"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/confirm_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/curved_button"
+            android:text="Confirm Options"
+            android:textColor="@color/colorDarkGrey" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="170dp"
+            android:background="@drawable/curved_button"
+            android:text="Cancel"
+            android:textColor="@color/colorDarkGrey" />
+    </RelativeLayout>
+
+</LinearLayout>

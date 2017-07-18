@@ -17,10 +17,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -35,8 +37,9 @@ public class ServerFragment extends Fragment implements
         TextToSpeech.OnInitListener{
     private AlertDialog alertDialog;
     private BookSearch searcher;
-    private boolean authorCheck = false;
-    String BookTitle="";
+    private boolean isAuthor = false,isTitle = true,isAuthorName = false,isSearch = true,isCancelled = false;
+    private View customView;
+    private String BookTitle="",destination="";
     private TextToSpeech textToSpeech;
     HashMap<String, String> TTSmap = new HashMap<String, String>();
 
@@ -51,23 +54,82 @@ public class ServerFragment extends Fragment implements
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                final String[] choices = {"Book","Author"};
-                dialogBuilder.setTitle("Select Search Preference:");
-                dialogBuilder = dialogBuilder.setSingleChoiceItems(choices, -1, new DialogInterface.OnClickListener() {
+                LayoutInflater inflater = (LayoutInflater) getActivity()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                customView = inflater.inflate(R.layout.custom_dialog_box, null);
+                dialogBuilder.setView(customView);
+                dialogBuilder.setCancelable(false);
+                final AlertDialog ChoicesDialog = dialogBuilder.create();
+                ChoicesDialog.show();
+                Button confirmButton = (Button) customView.findViewById(R.id.confirm_button);
+                Button cancelButton = (Button) customView.findViewById(R.id.cancel_button);
+                final Switch searchFor = (Switch) customView.findViewById(R.id.search_for_switch);
+                final Switch searchType = (Switch) customView.findViewById(R.id.search_type_switch);
+                final Switch searchBy = (Switch) customView.findViewById(R.id.search_by_switch);
+                searchFor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        String selectedChoice = choices[i];
-                        if (selectedChoice == "Author")
-                            authorCheck = true;
-                        dialog.dismiss();
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+
+                        if(isChecked){
+                            isAuthor = true;
+                            searchFor.setText("Searching for Author");
+                        }else{
+                            isAuthor = false;
+                            searchFor.setText("Searching for Book");
+                        }
+
                     }
                 });
-                AlertDialog ChoicesDialog = dialogBuilder.create();
-                ChoicesDialog.show();
+                searchType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+
+                        if(isChecked){
+                            isSearch = false;
+                            searchType.setText("Find Similar Books");
+                        }else{
+                            isSearch = true;
+                            searchType.setText("Find Book");
+                        }
+
+                    }
+                });
+                searchBy.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                                                 boolean isChecked) {
+
+                        if(isChecked){
+                            isAuthorName = true;
+                            isTitle = false;
+                            searchBy.setText("Author Name");
+                        }else{
+                            isAuthorName = false;
+                            isTitle = true;
+                            searchBy.setText("Book Title");
+                        }
+
+                    }
+                });
+                confirmButton.setOnClickListener(new  View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isCancelled = false;
+                        ChoicesDialog.dismiss();
+                    }});
+                cancelButton.setOnClickListener(new  View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isCancelled = true;
+                        ChoicesDialog.dismiss();
+                    }});
                 ChoicesDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(final DialogInterface arg0) {
-                        search();
+                        if(!isCancelled)
+                            search();
                     }
                 });
             }
@@ -83,6 +145,15 @@ public class ServerFragment extends Fragment implements
         TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
         return root;
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        textToSpeech.speak(destination, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+
+    }
+
     public boolean isOnline(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -105,9 +176,6 @@ public class ServerFragment extends Fragment implements
     public void search()
     {
         EditText search_Query=(EditText) getActivity().findViewById(R.id.input_text);
-        RadioButton isSearch = (RadioButton) getActivity().findViewById(R.id.search_radio_btn);
-        RadioButton isTitle = (RadioButton) getActivity().findViewById(R.id.title_radio_btn);
-        RadioButton isAuthor = (RadioButton) getActivity().findViewById(R.id.author_radio_btn);
         if(search_Query != null)
         {
             Context context = getActivity();
@@ -117,9 +185,9 @@ public class ServerFragment extends Fragment implements
                 JSONObject bookInfo = null;
                 JSONObject authorInfo = null;
                 try {
-                    if(authorCheck)
+                    if(isAuthor)
                     {
-                        if(isAuthor.isChecked())
+                        if(isAuthorName)
                         {
                             authorInfo = searcher.getAuthorByName(query);
                         }
@@ -130,9 +198,9 @@ public class ServerFragment extends Fragment implements
                     }
                     else
                     {
-                        if (isSearch.isChecked())
+                        if (isSearch)
                         {
-                            if(isTitle.isChecked())
+                            if(isTitle)
                             {
                                 bookInfo = searcher.getBookByTitle(query);
                             }
@@ -143,7 +211,7 @@ public class ServerFragment extends Fragment implements
                         }
                         else
                         {
-                            if(isTitle.isChecked())
+                            if(isTitle)
                             {
                                 bookInfo = searcher.getSimilarByTitle(query);
                             }
@@ -157,15 +225,35 @@ public class ServerFragment extends Fragment implements
                     e.printStackTrace();
                     Log.e("Error:",e.toString());
                 }
-                if(authorCheck)
+                if(isAuthor)
                 {
-                    Intent intent = new Intent(getActivity(), AuthorDetailsActivity.class).putExtra("JSONObject", authorInfo.toString());
-                    startActivity(intent);
+                    isAuthor = false;
+                    isTitle = true;
+                    isAuthorName = false;
+                    isSearch = true;
+                    if(authorInfo == null)
+                        Toast.makeText(getActivity(),"The text you have entered is invalid, please try again", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        destination = "You are viewing a page that contains author information";
+                        Intent intent = new Intent(getActivity(), AuthorDetailsActivity.class).putExtra("JSONObject", authorInfo.toString());
+                        startActivity(intent);
+                    }
                 }
                 else
                 {
-                    Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action","search");
-                    startActivity(intent);
+                    isAuthor = false;
+                    isTitle = true;
+                    isAuthorName = false;
+                    isSearch = true;
+                    if(bookInfo == null)
+                        Toast.makeText(getActivity(),"The text you have entered is invalid, please try again", Toast.LENGTH_LONG).show();
+                    else
+                    {
+                        destination = "You are viewing a list of searched books";
+                        Intent intent = new Intent(getActivity(), BookListActivity.class).putExtra("JSONObject", bookInfo.toString()).putExtra("Action","search");
+                        startActivity(intent);
+                    }
                 }
             }else
                 showDialogMsg("Please check your internet connection!");
@@ -269,7 +357,7 @@ public class ServerFragment extends Fragment implements
 
                     }
                 }
-                 else if(Result.get(0).equals("GetRating"))
+                else if(Result.get(0).equals("GetRating"))
                 {if(!Result.get(1).equals(""))
 
                 {
@@ -371,21 +459,21 @@ public class ServerFragment extends Fragment implements
         JSONObject rateObj = new JSONObject(ratingString);
         JSONArray  reviewsArr = rateObj.getJSONArray("booksinfo");
         JSONObject rate = reviewsArr.getJSONObject(0);
-            String s=rate.getString("goodreads_rating");
+        String s=rate.getString("goodreads_rating");
 
         return s;
     }
 
     private ArrayList<String> getReviewFromJson(String reviewString) throws JSONException{
-            JSONObject reviewsObj = new JSONObject(reviewString);
-            JSONArray  reviewsArr = reviewsObj.getJSONArray("booksinfo");
-            ArrayList<String> reviews=new ArrayList<>();
-            for(int i = 0; i < reviewsArr.length(); i++)
-            {
-                JSONObject review = reviewsArr.getJSONObject(i);
-                reviews.add(review.getString("review"));
-            }
-            return reviews;
+        JSONObject reviewsObj = new JSONObject(reviewString);
+        JSONArray  reviewsArr = reviewsObj.getJSONArray("booksinfo");
+        ArrayList<String> reviews=new ArrayList<>();
+        for(int i = 0; i < reviewsArr.length(); i++)
+        {
+            JSONObject review = reviewsArr.getJSONObject(i);
+            reviews.add(review.getString("review"));
+        }
+        return reviews;
     }
 
     public void ExpectRate()

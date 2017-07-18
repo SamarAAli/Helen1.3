@@ -89,8 +89,6 @@ public class BooksFragment extends Fragment  implements
         BookList=sharedPreferences.getStringSet("books",null);
         if(BookList!=null)
         {
-
-                //Books.addAll(BookList);
                 for (Iterator<String> it = BookList.iterator(); it.hasNext(); ) {
                     String uri = it.next();
                     Log.e("Book on create",uri);
@@ -101,16 +99,12 @@ public class BooksFragment extends Fragment  implements
                     String FileName =FilePath.substring(FilePath.lastIndexOf("/")+1);
                     FileName.replaceAll(".pdf","");
                     BooksNames.add(FileName);
-
-                     }
-
-
+                }
         }
         else
         {
             BookList=new HashSet<String>();
-           }
-
+        }
 
         mBooksAdapter =
                 new ArrayAdapter<String>(
@@ -140,15 +134,16 @@ public class BooksFragment extends Fragment  implements
                 textToSpeech.speak(BooksNames.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
             }
         });
-
         return rootView;
     }
-
     private void login() {
         Intent i=new Intent(getActivity(),LoginActivity.class);
         startActivity(i);
     }
-
+    private  void getStart()
+    {
+        textToSpeech.speak("welcome to homepage", TextToSpeech.QUEUE_FLUSH, TTSmap);
+    }
     /*@Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

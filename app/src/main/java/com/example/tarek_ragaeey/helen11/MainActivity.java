@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements
         tabLayout.setupWithViewPager(viewPager);
         textToSpeech = new TextToSpeech(this, (TextToSpeech.OnInitListener) this);
         TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        /*viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if(position==0)
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
                     textToSpeech.speak("Search Tab", TextToSpeech.QUEUE_FLUSH, TTSmap);
                 }
             }
-        });
+        });*/
 
     }
 
