@@ -71,6 +71,7 @@ public class TransitActivity extends AppCompatActivity {
         File[] files = directory.listFiles();
         Log.d("Files", "Size: "+ files.length);
         String filePath="";
+        Boolean found=false;
         for (int i = 0; i < files.length; i++)
         {
             String Filename=files[i].getName();
@@ -82,13 +83,15 @@ public class TransitActivity extends AppCompatActivity {
                 read.putExtra("path",filePath);
                 startActivity(read);
                 Log.d("file_path",filePath);
-
+                found=true;
                 break;
 
             }
         }
-        Intent intent=new Intent(TransitActivity.this,MainActivity.class);
-        startActivity(intent);
+        if(!found) {
+            Intent intent = new Intent(TransitActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     public boolean isOnline(Context context) {

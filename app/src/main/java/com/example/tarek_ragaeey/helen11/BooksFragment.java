@@ -121,8 +121,11 @@ public class BooksFragment extends Fragment  implements
 
 
                 String uri=Books.get(i);
+                Uri myUri = Uri.parse(uri);
+                File myFile = new File(myUri.getPath());
+                String FilePath = myFile.getAbsolutePath();
                 Intent intent = new Intent(getActivity(), PDFViewer.class);
-                intent.putExtra("uri", uri);
+                intent.putExtra("path", FilePath);
                 startActivity(intent);
                 return false;
             }
@@ -136,23 +139,7 @@ public class BooksFragment extends Fragment  implements
         });
         return rootView;
     }
-    private void login() {
-        Intent i=new Intent(getActivity(),LoginActivity.class);
-        startActivity(i);
-    }
-    private  void getStart()
-    {
-        textToSpeech.speak("welcome to homepage", TextToSpeech.QUEUE_FLUSH, TTSmap);
-    }
-    /*@Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
-        {
-            textToSpeech.speak(" Hi . showing  books and you can use the button down the page to issue command    " , TextToSpeech.QUEUE_FLUSH, TTSmap) ;
-        }
-    }
-*/
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu, menu);
@@ -199,14 +186,14 @@ public class BooksFragment extends Fragment  implements
                 Uri uri = data.getData();
 
                 File myFile = new File(uri.getPath());
-
+                String FilePath = myFile.getAbsolutePath();
                 if(!Books.contains(uri.toString())){
                     BookList.add(uri.toString());
                     ///////////////////////////////////////////////
                     Books.add(uri.toString());
 
 
-                    String FilePath = myFile.getAbsolutePath();
+
                     String FileName =FilePath.substring(FilePath.lastIndexOf("/")+1);
                     FileName.replaceAll(".pdf","");
                     BooksNames.add(FileName);
@@ -224,7 +211,7 @@ public class BooksFragment extends Fragment  implements
 
 
                 Intent i = new Intent(getActivity(), PDFViewer.class);
-                i.putExtra("uri", uri.toString());
+                i.putExtra("path", FilePath);
 
                 startActivity(i);
             }
