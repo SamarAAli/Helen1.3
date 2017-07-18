@@ -11,7 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class TabsAdapter extends FragmentPagerAdapter {
 
-    private String tabTitles[] = new String[] { "Books", "Search"};
+    private String tabTitles[] = new String[] { "Books", "Search","Suggestions"};
     private Context mContext;
     public TabsAdapter(FragmentManager fm) {
         super(fm);
@@ -22,12 +22,12 @@ public class TabsAdapter extends FragmentPagerAdapter {
         if (position == 0) {
             return new BooksFragment();
         }
-        else {
+        else if (position == 1){
             return new ServerFragment();
-        }/*
+        }
         else{
-            return new SimiliarBooksFragment();
-        }*/
+            return new SuggestionFragment();
+        }
     }
     @Override
     public CharSequence getPageTitle(int position) {
@@ -36,6 +36,6 @@ public class TabsAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 }

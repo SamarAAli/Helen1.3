@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import org.json.JSONObject;
 
 
-public class BookListActivity extends AppCompatActivity implements FragmentListener{
+public class BookListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +19,6 @@ public class BookListActivity extends AppCompatActivity implements FragmentListe
         }
         if (savedInstanceState == null) {
             BookListActivityFragment BookListFragment =  new BookListActivityFragment();
-            BookListFragment.setFragmentListner(this);
             BookListFragment.setArguments(extras);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.book_list_fragment, BookListFragment)
@@ -28,10 +27,5 @@ public class BookListActivity extends AppCompatActivity implements FragmentListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-    @Override
-    public void setDetailsData(JSONObject Bookobj) {
-        Intent intent = new Intent(this, BookDetailsActivity.class).putExtra("JSONObject", Bookobj.toString());
-        startActivity(intent);
     }
 }

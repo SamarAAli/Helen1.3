@@ -2,20 +2,21 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_weight="1"
     android:fillViewport="true">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1"
         android:background="@color/background">
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="350dp">
             <TextView
                 android:id="@+id/author_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_weight="0.10"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/holo_blue_light"
                 android:textStyle="bold" />
@@ -23,27 +24,26 @@
             <TextView
                 android:id="@+id/author_homeTown"
                 android:layout_width="wrap_content"
-                android:layout_weight="0.10"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/author_title"
                 android:textColor="@android:color/holo_blue_light"
                 android:textStyle="bold"
-                     />
+                />
 
             <TextView
                 android:id="@+id/author_workCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_below="@+id/author_homeTown"
                 android:textColor="@android:color/holo_blue_light"
-                android:layout_weight="0.10"
                 android:textStyle="bold" />
 
             <View
                 android:id="@+id/view"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_weight="0.10"
                 android:layout_below="@+id/author_workCount"
                 android:background="@color/colorPrimary2" />
 
@@ -54,25 +54,38 @@
                 android:text="@string/author_about"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/holo_blue_light"
-                android:layout_weight="0.10"
+                android:layout_below="@+id/view"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/author_about_obj"
+                 android:id="@+id/author_about_obj"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:maxLines="10"
+                 android:scrollbars = "vertical"
+                android:layout_below="@+id/author_about_title"
+                 android:textAppearance="?android:attr/textAppearanceMedium"
+                 android:textColor="@color/colorWhite" />
+
+           <!-- <com.borjabravo.readmoretextview.ReadMoreTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.10"
+                android:id="@+id/author_about_obj"
+                android:textColor="@color/colorWhite"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/colorWhite" />
-
-
+                android:layout_below="@+id/author_about_title"
+                app:trimExpandedText="Show more"
+                app:trimCollapsedText="Show less"
+                app:trimMode="trimModeLine"
+                app:trimLength="3"
+                app:colorClickableText="@color/colorAccent"/>-->
+        </RelativeLayout>
         <ImageButton
             android:id="@+id/ask_helen_author"
             android:layout_width="190dp"
             android:layout_height="190dp"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:layout_weight="0.2"
             android:background="@null"
             android:scaleType="centerInside"
             android:src="@drawable/mic_icon" />

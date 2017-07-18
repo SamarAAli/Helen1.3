@@ -42,9 +42,6 @@ import java.util.concurrent.ExecutionException;
 import static android.app.Activity.RESULT_OK;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class BooksFragment extends Fragment  implements
         TextToSpeech.OnInitListener {
 

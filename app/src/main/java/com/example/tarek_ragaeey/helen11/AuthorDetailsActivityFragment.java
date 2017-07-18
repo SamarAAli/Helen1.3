@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class AuthorDetailsActivityFragment extends Fragment  implements
         authorTitle.setText(AUTHOR);
 
         TextView about = (TextView) rootview.findViewById(R.id.author_about_obj);
+        about.setMovementMethod(new ScrollingMovementMethod());
         about.setText(ABOUT);
 
         TextView homeTown = (TextView) rootview.findViewById(R.id.author_homeTown);

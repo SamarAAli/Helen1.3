@@ -38,11 +38,11 @@ public class BookListActivityFragment extends Fragment implements
 
     //////////////////////////////////////////
     private BookListAdapter BooksAdapter;
-    private FragmentListener flistener;
     private BookSearch searcher;
     private List<JSONObject> BookList ;
     private JSONObject BookFullData;
     private AlertDialog alertDialog;
+    private String destination="";
     public BookListActivityFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +58,9 @@ public class BookListActivityFragment extends Fragment implements
                     JSONObject bookObj = BooksAdapter.getItem(position);
                     String BOOK_TITLE = getBookTitle(bookObj);
                     BookFullData = searcher.getFullBookInfo(BOOK_TITLE);
-                    flistener.setDetailsData(BookFullData);
+                    destination = "You are viewing a page that contains book information";
+                    Intent intent = new Intent(getActivity(), BookDetailsActivity.class).putExtra("JSONObject", BookFullData.toString());
+                    startActivity(intent);
                 }catch (Exception e)
                 {
                     Log.e("Error:",e.toString());
@@ -81,8 +83,9 @@ public class BookListActivityFragment extends Fragment implements
 //////////////////////////////////////////////////////////////////////////
         return rootView;
     }
-    public void setFragmentListner(FragmentListener fragmentListener) {
-        flistener = fragmentListener;
+    public void onStop() {
+        super.onStop();
+        textToSpeech.speak(destination, TextToSpeech.QUEUE_FLUSH, TTSmap);
     }
     @Override
     public void onStart()

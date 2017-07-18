@@ -74,6 +74,13 @@ public class BookDetailsActivityfragment extends Fragment implements
         }
         listView.addHeaderView(headerview);
         listView.setAdapter(detailsAdapter);
+        downloadButton.setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloader = new BookDownload(getActivity());
+                downloader.getDownload(downloadLink,BOOK_TITLE,Referer);
+            }
+        });
       ///////////////////////////////////////////////////////////////////////////////////////////// Tarek
         textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
         TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
@@ -215,14 +222,10 @@ public class BookDetailsActivityfragment extends Fragment implements
             }
         });
         downloadButton = (Button) headerview.findViewById(R.id.download_button);
-        downloadButton.setVisibility(View.VISIBLE);
-        downloadButton.setOnClickListener(new  View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downloader = new BookDownload(getActivity());
-                downloader.getDownload(downloadLink,BOOK_TITLE,Referer);
-            }
-        });
+        if( downloadLink != "null")
+            downloadButton.setVisibility(View.VISIBLE);
+        else
+            downloadButton.setVisibility(View.INVISIBLE);
     }
     ///////////////////////////////////////////////////////////////////////////////////Tarek
     public void stopVoice()
@@ -234,6 +237,17 @@ public class BookDetailsActivityfragment extends Fragment implements
 
     }
 
+    private void DownloadByVoice()
+    {
+        downloader = new BookDownload(getActivity());
+        if(downloadLink.equals("null")) {
+            textToSpeech.speak("your book is being downloaded", TextToSpeech.QUEUE_FLUSH, TTSmap);
+            while (textToSpeech.isSpeaking()) {
+
+            }
+            downloader.getDownload(downloadLink, BOOK_TITLE, Referer);
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -241,14 +255,19 @@ public class BookDetailsActivityfragment extends Fragment implements
 
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-
-            ArrayList<String> Result=new ArrayList<>();
-            UnderstandUserTask task=new UnderstandUserTask();
             textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
             while(textToSpeech.isSpeaking())
             {
 
             }
+            /*if(spokenText.get(0).toLowerCase().contains("download")||spokenText.get(0).toLowerCase().contains("downloading"))
+            {
+                    DownloadByVoice();
+                    return;
+            }*/
+            ArrayList<String> Result=new ArrayList<>();
+            UnderstandUserTask task=new UnderstandUserTask();
+
             /*    YesorNo();
                 if(YesOrNo==false)
                     return;*/

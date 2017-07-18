@@ -8,11 +8,27 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
+
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.NameValuePair;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import cz.msebera.android.httpclient.util.EntityUtils;
 
 import static android.support.v4.app.ActivityCompat.requestPermissions;
 
@@ -142,6 +158,24 @@ public class BookDownload {
                         output.close();
                         input.close();
                     }
+                    String basicAuth="JWT " + activityContext.getResources().getString(R.string.token);
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpPost httppost = new HttpPost(activityContext.getResources().getString(R.string.book_download));
+                    httppost.addHeader("Authorization", basicAuth);
+                    try {
+                        //add data
+                        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                        nameValuePairs.add(new BasicNameValuePair("book_title",BOOK_TITLE));
+                        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                        //execute http post
+                        HttpResponse response = httpclient.execute(httppost);
+                    } catch (ClientProtocolException e) {
+                        Log.e("Error:",e.getMessage(),e);
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        Log.e("Error:",e.getMessage(),e);
+                        e.printStackTrace();
+                    }
                 }
             } catch (Exception e) {
                 Log.e("Error: ", e.getMessage());
@@ -169,8 +203,8 @@ public class BookDownload {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
             pDialog.dismiss();
-            HttpURLConnection urlConnection = null;
-            try{
+            //HttpURLConnection urlConnection = null;
+            /*try{
                 Uri builtUri = Uri.parse(activityContext.getResources().getString(R.string.book_download)+BOOK_TITLE);
                 URL url = new URL(builtUri.toString());
                 String basicAuth="JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJvcmlnX2lhdCI6MTUwMDE4ODM1NCwidXNlcm5hbWUiOiJyYW1hZGFuIiwiZXhwIjoxNTAwMjc0NzU0LCJlbWFpbCI6InJhbWFkYW5haG1lZHJhbWFkYW45M0B5YWhvby5jb20iLCJ1c2VyX2lkIjoxfQ.aNgCoK8ZBnHL29NPFCPIHd3eHxP79Mq375709XmcvzY";
@@ -184,7 +218,27 @@ public class BookDownload {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
-            }
+            }*/
+            /*String basicAuth="JWT " + activityContext.getResources().getString(R.string.token);
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost(activityContext.getResources().getString(R.string.book_download));
+            httppost.addHeader("Authorization", basicAuth);
+            try {
+                //add data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
+                nameValuePairs.add(new BasicNameValuePair("book_title",BOOK_TITLE));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                //execute http post
+                HttpResponse response = httpclient.execute(httppost);
+                String x = "";
+            } catch (ClientProtocolException e) {
+                Log.e("Error:",e.getMessage(),e);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e("Error:",e.getMessage(),e);
+                e.printStackTrace();
+            }*/
+
         }
     }
 }

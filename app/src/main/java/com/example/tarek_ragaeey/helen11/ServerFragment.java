@@ -150,8 +150,6 @@ public class ServerFragment extends Fragment implements
     public void onStop() {
         super.onStop();
         textToSpeech.speak(destination, TextToSpeech.QUEUE_FLUSH, TTSmap);
-
-
     }
 
     public boolean isOnline(Context context) {
@@ -232,7 +230,7 @@ public class ServerFragment extends Fragment implements
                     isAuthorName = false;
                     isSearch = true;
                     if(authorInfo == null)
-                        Toast.makeText(getActivity(),"The text you have entered is invalid, please try again", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Something went wrong, please check that the text you have entered is valid", Toast.LENGTH_LONG).show();
                     else
                     {
                         destination = "You are viewing a page that contains author information";
@@ -247,7 +245,7 @@ public class ServerFragment extends Fragment implements
                     isAuthorName = false;
                     isSearch = true;
                     if(bookInfo == null)
-                        Toast.makeText(getActivity(),"The text you have entered is invalid, please try again", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(),"Something went wrong, please check that the text you have entered is valid", Toast.LENGTH_LONG).show();
                     else
                     {
                         destination = "You are viewing a list of searched books";
