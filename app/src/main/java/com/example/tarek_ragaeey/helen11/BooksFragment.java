@@ -302,7 +302,10 @@ public class BooksFragment extends Fragment  implements
                             ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
                             for(int i=0;i<reviews.size();i++) {
                                 textToSpeech.speak(reviews.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
+                                while(textToSpeech.isSpeaking())
+                                {
 
+                                }
                             }
 
                         } catch (Exception e) {
