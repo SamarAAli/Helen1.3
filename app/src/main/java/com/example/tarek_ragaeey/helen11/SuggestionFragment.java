@@ -156,7 +156,7 @@ public class SuggestionFragment extends Fragment implements
                         {
                             Log.e("Error:",e.toString());
                         }
-                        return false;
+                        return true;
                     }
                 });
             }

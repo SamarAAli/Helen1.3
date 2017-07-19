@@ -63,6 +63,7 @@ public class PDFViewer extends AppCompatActivity implements
     private Integer StartEndIT=0;
     private int currentPage=0;
     private Integer StartEndDiff=0;
+    private Boolean alert2=false;
 /////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -115,14 +116,14 @@ public class PDFViewer extends AppCompatActivity implements
                 }
             }
         });
-        bt.setOnLongClickListener(new View.OnLongClickListener() {
+       /* bt.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
 
                 ExpectSpeechInput();
-                return false;
+                return true;
             }
-        });
+        });*/
         pdfView.setOnLongClickListener(new View.OnLongClickListener() {
 
 
@@ -146,6 +147,7 @@ public class PDFViewer extends AppCompatActivity implements
        myUri =Uri.fromFile(new File(FilePath));
        // pdfView.fromSource(FilePath).onPageChange(onPageChangeListener).load();
         pdfView.fromUri(myUri).onPageChange(onPageChangeListener).load();
+
 
     }
 
@@ -207,13 +209,18 @@ public class PDFViewer extends AppCompatActivity implements
                 public void onDone(String utteranceId) {
 
                     Log.e("Tarek onDone", "LOL");
-                    if (Completed==true)
+                    if (Completed==true) {
                         try {
                             ChangePage(pdfView.getCurrentPage() + 1);
-                            Completed=false;
+                            Completed = false;
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
+                    }
+                        else if(alert2) {
+                        alert2 = false;
+                        return;
+                    }
 
                    else if (pause == false)
                         try {
@@ -252,7 +259,10 @@ public class PDFViewer extends AppCompatActivity implements
             }
         });
     }
-
+    public void changethepage(int page)
+    {
+        pdfView.jumpTo(page);
+    }
 
     private void ChangePage(final int page) throws RemoteException {
         runOnUiThread(new Runnable() {
@@ -322,7 +332,7 @@ public class PDFViewer extends AppCompatActivity implements
 
         TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
 
-
+       // textToSpeech = new TextToSpeech(this, (TextToSpeech.OnInitListener) this);
             //if(End.get(StartEndIT)!=pageContent.length()-1) {
                 String s = "";
 
@@ -346,10 +356,7 @@ public class PDFViewer extends AppCompatActivity implements
 
     }
 
-    private void playSound(String words) {
 
-        textToSpeech.speak(words, TextToSpeech.QUEUE_FLUSH, TTSmap);
-    }
 
     private void play_pause() throws RemoteException
     {
@@ -370,6 +377,7 @@ public class PDFViewer extends AppCompatActivity implements
                                   {
                                       try
                                       {
+
                                           ChangePage(pdfView.getCurrentPage());
                                           pause = false;
                                       } catch (RemoteException e)
@@ -388,18 +396,20 @@ public class PDFViewer extends AppCompatActivity implements
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-            if(spokenText.equals("exit"))
+            if(spokenText.get(0).toLowerCase().contains("close"))
             {
                 Intent i=new Intent(this,MainActivity.class);
                 startActivity(i);
             }
-            else if(spokenText.equals("play"))
+            else if(spokenText.get(0).toLowerCase().contains("repeat"))
             {
-                try {
-                    play_pause();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+               if(pdfView.getCurrentPage()>0)
+               {
+                   StartEndIT = 0;
+
+                       changethepage(pdfView.getCurrentPage()-1);
+
+               }
             }
 
 
@@ -467,6 +477,9 @@ public class PDFViewer extends AppCompatActivity implements
            // Completed = false;
 
         }
+        alert2=true;
+        textToSpeech.speak("enter page number", TextToSpeech.QUEUE_FLUSH, TTSmap);
+
 
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -480,6 +493,7 @@ public class PDFViewer extends AppCompatActivity implements
                 m_Integer = Integer.parseInt(input.getText().toString());
                 try {
                     ChangePage(m_Integer - 1);
+                    StartEndIT=0;
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

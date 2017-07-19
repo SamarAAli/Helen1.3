@@ -156,7 +156,7 @@ public class BooksFragment extends Fragment  implements
                 Intent intent = new Intent(getActivity(), PDFViewer.class);
                 intent.putExtra("path", Bookpath.get(i));
                 startActivity(intent);
-                return false;
+                return true;
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -187,8 +187,7 @@ public class BooksFragment extends Fragment  implements
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.get_pdf:
-                showFileChooser();
+
 
             default:
                 return super.onOptionsItemSelected(item);
