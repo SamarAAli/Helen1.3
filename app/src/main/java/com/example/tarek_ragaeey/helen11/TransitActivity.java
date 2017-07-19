@@ -44,12 +44,6 @@ public class TransitActivity extends AppCompatActivity {
                 readBook(Entity);
                 break;
 
-            case "GetReview":
-                RateReview(Entity,"getReview");
-                break;
-            case "GetRating":
-                RateReview(Entity,"getRating");
-                    break;
             case"AuthorName":
                 ShowAuthorDetails(Entity,Type);
                 break;
@@ -65,7 +59,7 @@ public class TransitActivity extends AppCompatActivity {
 
     private void readBook(String entity) {
 
-        String path = Environment.getExternalStorageDirectory().toString()+"/Download";
+        String path = Environment.getExternalStorageDirectory().toString()+"/Download/Helen";
         Log.d("Files", "Path: " + path);
         File directory = new File(path);
         File[] files = directory.listFiles();
@@ -75,19 +69,32 @@ public class TransitActivity extends AppCompatActivity {
         for (int i = 0; i < files.length; i++)
         {
             String Filename=files[i].getName();
-
-            if(Filename.toLowerCase().contains(entity.toLowerCase()))
+            if(Filename.length()>3)
             {
-                filePath=files[i].getAbsolutePath();
-                Intent read=new Intent(TransitActivity.this,MainActivity.class);
-                read.putExtra("path",filePath);
-                startActivity(read);
-                Log.d("file_path",filePath);
-                found=true;
-                break;
+                if (Filename.substring(Filename.length() - 4).equals(".pdf")) {
+                    if (Filename.toLowerCase().contains(entity.toLowerCase())) {
+                        filePath = files[i].getAbsolutePath();
+                        Intent read = new Intent(TransitActivity.this, PDFViewer.class);
+                        read.putExtra("path", filePath);
+                        startActivity(read);
+                        Log.d("file_path", filePath);
+                        found = true;
+                        break;
 
+                    } else if (entity.toLowerCase().contains(Filename.toLowerCase())) {
+                        filePath = files[i].getAbsolutePath();
+                        Intent read = new Intent(TransitActivity.this, PDFViewer.class);
+                        read.putExtra("path", filePath);
+                        startActivity(read);
+                        Log.d("file_path", filePath);
+                        found = true;
+                        break;
+
+                    }
+                }
             }
         }
+
         if(!found) {
             Intent intent = new Intent(TransitActivity.this, MainActivity.class);
             startActivity(intent);

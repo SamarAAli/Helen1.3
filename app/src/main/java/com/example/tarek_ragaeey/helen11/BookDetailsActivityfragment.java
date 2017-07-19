@@ -46,6 +46,7 @@ public class BookDetailsActivityfragment extends Fragment implements
     private BookSearch searcher;
     private Button downloadButton;
     String GOODREADS_RATING;
+    JSONArray REVIEWS;
     //////////////////////////////////////////////////////////////////// Tarek
     private TextToSpeech textToSpeech;
     HashMap<String, String> TTSmap = new HashMap<String, String>();
@@ -74,13 +75,6 @@ public class BookDetailsActivityfragment extends Fragment implements
         }
         listView.addHeaderView(headerview);
         listView.setAdapter(detailsAdapter);
-        downloadButton.setOnClickListener(new  View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                downloader = new BookDownload(getActivity());
-                downloader.getDownload(downloadLink,BOOK_TITLE,Referer);
-            }
-        });
       ///////////////////////////////////////////////////////////////////////////////////////////// Tarek
         textToSpeech = new TextToSpeech(getActivity(), (TextToSpeech.OnInitListener) this);
         TTSmap.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "UniqueID");
@@ -110,7 +104,7 @@ public class BookDetailsActivityfragment extends Fragment implements
         USER_RATING = bookObj.getString("user_rating");
         Referer = bookObj.getString("referer");
         downloadLink = bookObj.getString("download_link");
-        JSONArray REVIEWS = bookObj.getJSONArray("comments");
+         REVIEWS = bookObj.getJSONArray("comments");
         interactor = new CreateUserInteractions(getActivity());
 
         Adapterinput = new ArrayList<>();
@@ -222,10 +216,14 @@ public class BookDetailsActivityfragment extends Fragment implements
             }
         });
         downloadButton = (Button) headerview.findViewById(R.id.download_button);
-        if( downloadLink != "null")
-            downloadButton.setVisibility(View.VISIBLE);
-        else
-            downloadButton.setVisibility(View.INVISIBLE);
+        downloadButton.setVisibility(View.VISIBLE);
+        downloadButton.setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                downloader = new BookDownload(getActivity());
+                downloader.getDownload(downloadLink,BOOK_TITLE,Referer);
+            }
+        });
     }
     ///////////////////////////////////////////////////////////////////////////////////Tarek
     public void stopVoice()
@@ -236,11 +234,10 @@ public class BookDetailsActivityfragment extends Fragment implements
         }
 
     }
-
     private void DownloadByVoice()
     {
         downloader = new BookDownload(getActivity());
-        if(downloadLink.equals("null")) {
+        if(!downloadLink.equals("null")) {
             textToSpeech.speak("your book is being downloaded", TextToSpeech.QUEUE_FLUSH, TTSmap);
             while (textToSpeech.isSpeaking()) {
 
@@ -248,119 +245,110 @@ public class BookDetailsActivityfragment extends Fragment implements
             downloader.getDownload(downloadLink, BOOK_TITLE, Referer);
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if((requestCode == 100) && (data != null) ){
+        if((requestCode == 100) && (data != null) ) {
 
             // Store the data sent back in an ArrayList
             ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            textToSpeech.speak("Executing command "+spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
-            while(textToSpeech.isSpeaking())
-            {
+            if (spokenText.get(0).toLowerCase().contains("download") || spokenText.get(0).toLowerCase().contains("downloading")) {
 
-            }
-            /*if(spokenText.get(0).toLowerCase().contains("download")||spokenText.get(0).toLowerCase().contains("downloading"))
-            {
-                    DownloadByVoice();
-                    return;
-            }*/
-            ArrayList<String> Result=new ArrayList<>();
-            UnderstandUserTask task=new UnderstandUserTask();
+                DownloadByVoice();
+                return;
+            } else {
+                ArrayList<String> Result = new ArrayList<>();
+                UnderstandUserTask task = new UnderstandUserTask();
+                textToSpeech.speak("Executing command " + spokenText.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+                while (textToSpeech.isSpeaking()) {
 
-            /*    YesorNo();
-                if(YesOrNo==false)
-                    return;*/
+                }
 
-            try {
-                Result= task.execute(spokenText.get(0)).get();
-                if(Result.get(0).equals("WriteRating"))
-                {
-                    if(!Result.get(1).equals(""))
-                        BookTitleRateReview=Result.get(1);
+                try {
+                    Result = task.execute(spokenText.get(0)).get();
+                    if (Result.get(0).equals("WriteRating")) {
+                        if (!Result.get(1).equals(""))
+                            BookTitleRateReview = Result.get(1);
                         else
-                            BookTitleRateReview=BOOK_TITLE;
-                    ExpectRate();
-                }
+                            BookTitleRateReview = BOOK_TITLE;
+                        ExpectRate();
+                    } else if (Result.get(0).equals("WriteReview")) {
+                        if (!Result.get(1).equals(""))
+                            BookTitleRateReview = Result.get(1);
+                        else
+                            BookTitleRateReview = BOOK_TITLE;
+                        ExpectReview();
+                    } else if (Result.get(0).equals("Summary")) {
+                        textToSpeech.speak(DESCRIPTION, TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    } else if (Result.get(0).equals("GetReview")) {
+                        if (!Result.get(1).equals(""))
 
-                else if(Result.get(0).equals("WriteReview"))
-                {
-                    if(!Result.get(1).equals(""))
-                        BookTitleRateReview=Result.get(1);
-                    else
-                        BookTitleRateReview=BOOK_TITLE;
-                    ExpectReview();
-                }
+                        {
+                            BookTitleRateReview = Result.get(1);
+                            searcher = new BookSearch(getActivity());
+                            JSONObject bookInfo = null;
+                            try {
+                                bookInfo = searcher.getComments(BookTitleRateReview);
+                                ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
+                                for(int i=0;i<reviews.size();i++) {
+                                    textToSpeech.speak(reviews.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
 
-                else if(Result.get(0).equals("Summary"))
-                {
-                    textToSpeech.speak(DESCRIPTION, TextToSpeech.QUEUE_FLUSH, TTSmap);
-                }
-                else if(Result.get(0).equals("GetReview")) {
-                    if (!Result.get(1).equals(""))
+                                }
 
-                    {
-                        BookTitleRateReview = Result.get(1);
-                        searcher = new BookSearch(getActivity());
-                        JSONObject bookInfo = null;
-                        try {
-                            bookInfo = searcher.getComments(BookTitleRateReview);
-                            ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
-                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+                            ArrayList<String> reviews = getReviewFromJsonDetails(REVIEWS);
+                            for(int i=0;i<reviews.size();i++) {
+                                textToSpeech.speak(reviews.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                            }
+
+                        }
+                    } else if (Result.get(0).equals("GetRating")) {
+                        if (!Result.get(1).equals(""))
+
+                        {
+                            BookTitleRateReview = Result.get(1);
+                            searcher = new BookSearch(getActivity());
+                            JSONObject bookInfo = null;
+                            try {
+                                bookInfo = searcher.getRatings(BookTitleRateReview);
+                                String Rating = getRatingFromJson(bookInfo.toString());
+                                textToSpeech.speak(BookTitleRateReview + " Rating is " + Rating, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            textToSpeech.speak(BOOK_TITLE + " Rating is " + GOODREADS_RATING, TextToSpeech.QUEUE_FLUSH, TTSmap);
+                            while (textToSpeech.isSpeaking()) {
+
+                            }
                         }
 
                     } else {
-                        textToSpeech.speak("", TextToSpeech.QUEUE_FLUSH, TTSmap);
-                        while (textToSpeech.isSpeaking()) {
+                        Intent i = new Intent(getActivity(), TransitActivity.class);
+                        i.putExtra("query_class", Result.get(0));
 
-                        }
-
-                    }
-                }
-                else if(Result.get(0).equals("GetRating"))
-                {if(!Result.get(1).equals(""))
-
-                {
-                    BookTitleRateReview = Result.get(1);
-                    searcher = new BookSearch(getActivity());
-                    JSONObject bookInfo = null;
-                    try {
-                        bookInfo=searcher.getRatings(BookTitleRateReview);
-                        String Rating=getRatingFromJson(bookInfo.toString());
-                        textToSpeech.speak(BookTitleRateReview+" Rating is "+ Rating, TextToSpeech.QUEUE_FLUSH, TTSmap);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        i.putExtra("entity", Result.get(1));
+                        i.putExtra("type", Result.get(2));
+                        startActivity(i);
                     }
 
-                }
-                else
-                {
-                    textToSpeech.speak(BOOK_TITLE+ " Rating is "+ GOODREADS_RATING, TextToSpeech.QUEUE_FLUSH, TTSmap);
-                    while (textToSpeech.isSpeaking()) {
-
-                    }
-                }
-
-                }
-                else {
-                    Intent i = new Intent(getActivity(), TransitActivity.class);
-                    i.putExtra("query_class", Result.get(0));
-
-                    i.putExtra("entity", Result.get(1));
-                    i.putExtra("type", Result.get(2));
-                    startActivity(i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
-
         }
         else if((requestCode == 110) && (data != null))
         {ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -369,6 +357,17 @@ public class BookDetailsActivityfragment extends Fragment implements
             float Rating= (float) 1.1;
             try {
                 Rating=Float.parseFloat(spokenText.get(0));
+                if(!((Rating>=1)&&(Rating<=5)))
+                {
+                    textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    ExpectRate();
+                    return;
+                }
+                user_rating.setRating(Rating);
             } catch (NumberFormatException e) {
                 textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
                 while(textToSpeech.isSpeaking())
@@ -510,7 +509,16 @@ public class BookDetailsActivityfragment extends Fragment implements
         }
         return reviews;
     }
+    private ArrayList<String> getReviewFromJsonDetails(JSONArray reviewsArr) throws JSONException{
 
+        ArrayList<String> reviews=new ArrayList<>();
+        for(int i = 0; i < reviewsArr.length(); i++)
+        {
+            JSONObject review = reviewsArr.getJSONObject(i);
+            reviews.add(review.getString("review"));
+        }
+        return reviews;
+    }
 
     @Override
     public void onInit(int i) {

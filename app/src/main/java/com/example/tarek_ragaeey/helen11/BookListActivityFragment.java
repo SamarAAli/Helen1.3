@@ -55,7 +55,27 @@ public class BookListActivityFragment extends Fragment implements
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 BookSearch searcher = new BookSearch(getActivity());
                 try {
+                    stopVoice();
                     JSONObject bookObj = BooksAdapter.getItem(position);
+                    String BOOK_TITLE = getBookTitle(bookObj);
+                    textToSpeech.speak(BOOK_TITLE, TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                }catch (Exception e)
+                {
+                    Log.e("Error:",e.toString());
+                }
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+                BookSearch searcher = new BookSearch(getActivity());
+                try {
+                    stopVoice();
+                    JSONObject bookObj = BooksAdapter.getItem(i);
                     String BOOK_TITLE = getBookTitle(bookObj);
                     BookFullData = searcher.getFullBookInfo(BOOK_TITLE);
                     destination = "You are viewing a page that contains book information";
@@ -65,6 +85,7 @@ public class BookListActivityFragment extends Fragment implements
                 {
                     Log.e("Error:",e.toString());
                 }
+                return false;
             }
         });
         //////////////////////////////////////////////////////////////////////Tarek
@@ -148,6 +169,15 @@ public class BookListActivityFragment extends Fragment implements
         return resultStrs;
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////////Tarek
+    public void stopVoice()
+    {
+        if(textToSpeech.isSpeaking())
+        {
+            textToSpeech.stop();
+        }
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -163,11 +193,18 @@ public class BookListActivityFragment extends Fragment implements
             {
 
             }
-            /*    YesorNo();
-                if(YesOrNo==false)
-                    return;*/
+
 
             try {
+                if(!isOnline(getActivity()))
+                {
+                    textToSpeech.speak("Check you Internet connection", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    return;
+                }
                 Result= task.execute(spokenText.get(0)).get();
                 if(Result.get(0).equals("")||Result.get(1).equals("")||Result.get(2).equals(""))
                 {
@@ -225,7 +262,10 @@ public class BookListActivityFragment extends Fragment implements
                         try {
                             bookInfo = searcher.getComments(BookTitle);
                             ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
-                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+                            for(int i=0;i<reviews.size();i++) {
+                                textToSpeech.speak(reviews.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                            }
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -291,6 +331,16 @@ public class BookListActivityFragment extends Fragment implements
             float Rating= (float) 1.1;
             try {
                 Rating=Float.parseFloat(spokenText.get(0));
+                if(!((Rating>=1)&&(Rating<=5)))
+                {
+                    textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    ExpectRate();
+                    return;
+                }
             } catch (NumberFormatException e) {
                 textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
                 while(textToSpeech.isSpeaking())
@@ -387,7 +437,7 @@ public class BookListActivityFragment extends Fragment implements
     public void ExpectReview()
     {
 
-        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        textToSpeech.speak("Say your review", TextToSpeech.QUEUE_FLUSH,TTSmap);
         while(textToSpeech.isSpeaking())
         {
 
@@ -413,6 +463,7 @@ public class BookListActivityFragment extends Fragment implements
     }
     public void ExpectSpeechInput() {
 
+        stopVoice();
         // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 

@@ -15,50 +15,40 @@
 
 
         <!-- Name Label -->
-            <EditText android:id="@+id/input_name"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content"
-                android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:inputType="textPersonName"
-                android:hint="Name" />
+        <EditText android:id="@+id/input_name"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/colorWhite"
+            android:inputType="textPersonName"
+            android:hint="Name" />
 
-        <!--  Email Label -->
-            <EditText android:id="@+id/input_email"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
 
-        android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="Email" />
 
         <!-- Password Label -->
-            <EditText android:id="@+id/input_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+        <EditText android:id="@+id/input_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
 
-                android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:inputType="textPassword"
-                android:hint="Password"/>
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/colorWhite"
+            android:inputType="textPassword"
+            android:hint="Password"/>
         <!-- Password Re-enter Label -->
 
-            <EditText android:id="@+id/input_reEnterPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:inputType="textPassword"
-                android:hint="Re-enter Password"/>
+        <EditText android:id="@+id/input_ConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/colorWhite"
+            android:inputType="textPassword"
+            android:hint="Confirm Password"/>
 
         <!-- Signup Button -->
         <android.support.v7.widget.AppCompatButton
@@ -70,15 +60,17 @@
             android:padding="12dp"
             android:text="Create Account"/>
 
-        <Button
-            android:id="@+id/ask_helen_signup"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+        <ImageButton
+            android:layout_gravity="center"
+            android:layout_width="190dp"
+            android:layout_height="190dp"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:id="@+id/ask_helen_home"
             android:layout_weight="0.15"
-            android:text="@string/voiceButton"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            android:layout_alignParentBottom="true" />
+
+            android:src="@drawable/mic_icon"
+            />
 
     </LinearLayout>
 </ScrollView>

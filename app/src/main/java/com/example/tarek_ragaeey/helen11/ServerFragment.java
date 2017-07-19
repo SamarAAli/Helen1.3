@@ -284,6 +284,15 @@ public class ServerFragment extends Fragment implements
                     return;*/
 
             try {
+                if(!isOnline(getActivity()))
+                {
+                    textToSpeech.speak("Check you Internet connection", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    return;
+                }
                 Result= task.execute(spokenText.get(0)).get();
                 if(Result.get(0).equals("")||Result.get(1).equals("")||Result.get(2).equals(""))
                 {
@@ -341,7 +350,10 @@ public class ServerFragment extends Fragment implements
                         try {
                             bookInfo = searcher.getComments(BookTitle);
                             ArrayList<String> reviews = getReviewFromJson(bookInfo.toString());
-                            textToSpeech.speak(reviews.get(0), TextToSpeech.QUEUE_FLUSH, TTSmap);
+                            for(int i=0;i<reviews.size();i++) {
+                                textToSpeech.speak(reviews.get(i), TextToSpeech.QUEUE_FLUSH, TTSmap);
+
+                            }
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -407,6 +419,16 @@ public class ServerFragment extends Fragment implements
             float Rating= (float) 1.1;
             try {
                 Rating=Float.parseFloat(spokenText.get(0));
+                if(!((Rating>=1)&&(Rating<=5)))
+                {
+                    textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
+                    while(textToSpeech.isSpeaking())
+                    {
+
+                    }
+                    ExpectRate();
+                    return;
+                }
             } catch (NumberFormatException e) {
                 textToSpeech.speak("say rate from 1 to 5 only", TextToSpeech.QUEUE_FLUSH, TTSmap);
                 while(textToSpeech.isSpeaking())
@@ -503,7 +525,7 @@ public class ServerFragment extends Fragment implements
     public void ExpectReview()
     {
 
-        textToSpeech.speak("Say your rate", TextToSpeech.QUEUE_FLUSH,TTSmap);
+        textToSpeech.speak("Say your review", TextToSpeech.QUEUE_FLUSH,TTSmap);
         while(textToSpeech.isSpeaking())
         {
 
@@ -527,8 +549,16 @@ public class ServerFragment extends Fragment implements
             Toast.makeText(getActivity(),R.string.stt_not_supported_message, Toast.LENGTH_LONG).show();
         }
     }
-    public void ExpectSpeechInput() {
+    public void stopVoice()
+    {
+        if(textToSpeech.isSpeaking())
+        {
+            textToSpeech.stop();
+        }
 
+    }
+    public void ExpectSpeechInput() {
+        stopVoice();
         // Starts an Activity that will convert speech to text
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 

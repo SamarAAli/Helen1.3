@@ -14,26 +14,26 @@
 
 
         <!--  Email Label -->
-            <EditText android:id="@+id/input_email"
-                android:layout_marginTop="8dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="Email" />
+        <EditText android:id="@+id/input_name"
+            android:layout_marginTop="8dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/colorWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Username" />
 
         <!--  Password Label -->
 
-            <EditText android:id="@+id/input_password"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:textColor="#FFFFFF"
-                android:textColorHint="@color/colorWhite"
-                android:hint="Password"/>
+        <EditText android:id="@+id/input_password"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="#FFFFFF"
+            android:textColorHint="@color/colorWhite"
+            android:hint="Password"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_login"
@@ -52,15 +52,17 @@
             android:text="No account yet? Create one"
             android:gravity="center"
             android:textSize="16dip"/>
-        <Button
-            android:id="@+id/ask_helen_login"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
+        <ImageButton
+            android:layout_gravity="center"
+            android:layout_width="190dp"
+            android:layout_height="190dp"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:id="@+id/ask_helen_home"
             android:layout_weight="0.15"
-            android:text="@string/voiceButton"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            android:layout_alignParentBottom="true" />
+
+            android:src="@drawable/mic_icon"
+            />
 
     </LinearLayout>
 </ScrollView>

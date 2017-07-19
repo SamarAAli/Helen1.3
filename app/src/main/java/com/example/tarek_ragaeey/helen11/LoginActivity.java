@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -13,57 +14,68 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.Bind;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "LoginActivity";
+    //  TextView name,email;
+//    SharedPreferences preferences;
     private static final int REQUEST_SIGNUP = 0;
-    android.support.v4.app.FragmentTransaction fragmentTransaction;
-
-    @Bind(R.id.input_email) EditText _emailText;
-    @Bind(R.id.input_password) EditText _passwordText;
-    @Bind(R.id.btn_login) Button _loginButton;
-    @Bind(R.id.link_signup) TextView _signupLink;
-    
-    @Override
+    private static final String TAG = "LoginActivity";
+    String stringUsername,stringPassword;
+    EditText etUsername,etPassword;
+    Button _loginButton;
+    TextView _signupLink;
+    String Token = "";
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
 
-        SharedPreferences sharedPreferences=getSharedPreferences("com.example.tarek_ragaeey.helen11", Context.MODE_PRIVATE);
-       String Login= sharedPreferences.getString("username",null);
-        if(Login!=null)
-        {
-            BooksFragment myFragment=new BooksFragment();
-            fragmentTransaction=getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.container, myFragment);
-            fragmentTransaction .commit();
-        }
-
-        _loginButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
+        etUsername = (EditText) findViewById(R.id.input_name);
+        etPassword = (EditText) findViewById(R.id.input_password);
+        _signupLink = (TextView) findViewById(R.id.link_signup);
+        _loginButton = (Button) findViewById(R.id.btn_login);
 
         _signupLink.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(intent);
                 startActivityForResult(intent, REQUEST_SIGNUP);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
-    }
 
+
+        _loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                login();
+
+            }
+
+        });
+
+    }
     public void login() {
         Log.d(TAG, "Login");
 
@@ -75,15 +87,44 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.AppTheme);
+                R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        stringUsername = etUsername.getText().toString();
+        stringPassword = etPassword.getText().toString();
+        String task = "login";
+        BackgroundTask backgroundTask = new BackgroundTask(LoginActivity.this);
 
-        // TODO: Implement your own authentication logic here.
+        etUsername.setText("");
+        etPassword.setText("");
+
+        //execute the task
+        //passes the paras to the backgroundTask (param[0],param[1],param[2])
+        try {
+            Token = backgroundTask.execute(task, stringUsername, stringPassword).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        if (Token.equals("error"))
+        {
+            Toast.makeText(this,"Invalid Username or Password",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            SharedPreferences sharedPreferences = getSharedPreferences("com.example.tarek_ragaeey.helen11", Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.clear();
+            edit.putString("token", Token);
+            edit.commit();
+            // Start the Signup activity
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -96,28 +137,10 @@ public class LoginActivity extends AppCompatActivity {
                 }, 3000);
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SIGNUP) {
-            if (resultCode == RESULT_OK) {
-
-                // TODO: Implement successful signup logic here
-                // By default we just finish the Activity and log them in automatically
-                this.finish();
-            }
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Disable going back to the MainActivity
-        moveTaskToBack(true);
-    }
-
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
-        finish();
+
+        //finish();
     }
 
     public void onLoginFailed() {
@@ -129,23 +152,35 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        stringUsername = etUsername.getText().toString();
+        stringPassword = etPassword.getText().toString();
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+        if (stringUsername.isEmpty() || stringUsername.length() < 3) {
+            etUsername.setError("at least 3 characters");
             valid = false;
         } else {
-            _emailText.setError(null);
+            etUsername.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (stringPassword.isEmpty() || stringPassword.length() < 4 || stringPassword.length() > 10) {
+            etPassword.setError("between 4 and 10 alphanumeric characters");
             valid = false;
         } else {
-            _passwordText.setError(null);
+            etPassword.setError(null);
         }
 
         return valid;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if((requestCode == 100) && (data != null) ) {
+
+            // Store the data sent back in an ArrayList
+            ArrayList<String> spokenText = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+
+        } super.onActivityResult(requestCode, resultCode, data);
+    }
+
 }
